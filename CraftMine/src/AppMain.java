@@ -1,3 +1,5 @@
+// Djazy Faradj
+// Last Updated: 2024-12-20
 
 public class AppMain {
 
@@ -7,6 +9,7 @@ public class AppMain {
 		TriangleRenderer tr = new TriangleRenderer();
 		
 		tr.Run();
+		System.out.println("Closing.");
 	}
 
 }

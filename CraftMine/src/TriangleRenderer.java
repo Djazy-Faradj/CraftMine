@@ -1,3 +1,6 @@
+// Djazy Faradj
+// Last Updated: 2024-12-20
+
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
