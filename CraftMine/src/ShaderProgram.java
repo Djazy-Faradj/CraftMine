@@ -1,11 +1,20 @@
+import java.nio.FloatBuffer;
+
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.system.MemoryStack;
+import org.joml.Matrix4f;
 
 public class ShaderProgram {
 	private final int programId;
+	private final TextureHandler texture;
+	private float aspectRatio = (float) Settings.WINDOW_WIDTH / Settings.WINDOW_HEIGHT;
 	
 	public ShaderProgram(String vertexShaderSource, String fragmentShaderSource) {
 		int vertexShaderId = CompileShader(vertexShaderSource, GL30.GL_VERTEX_SHADER);
 		int fragmentShaderId = CompileShader(fragmentShaderSource, GL30.GL_FRAGMENT_SHADER);
+		texture = new TextureHandler("assets/terrain.png");
+		
+		CreateProjectionMatrix();
 		
 		// Link shaders into a program
 		programId = GL30.glCreateProgram();
@@ -36,13 +45,38 @@ public class ShaderProgram {
 	
 	public void Use() {
 		GL30.glUseProgram(programId);
+		texture.Bind(0); // Bind to texture unit 0
+		GL30.glUniform1i(GL30.glGetUniformLocation(programId, "texture"), 0);
 	}
 	
 	public int GetId() {
 		return programId;
 	}
 	
+	public void UpdateAspectRatio(float ar) {
+		aspectRatio = ar;
+		CreateProjectionMatrix();
+	}
+	
+	public void CreateProjectionMatrix() {
+		// Create orthographic projection matrix
+		Matrix4f projection = new Matrix4f().ortho(
+				-aspectRatio, aspectRatio, 	// Left, Right (scaled by aspect ratio)
+				-1.0f, 1.0f,				// Bottom, Top
+				-1.0f, 1.0f					// Near, Far (Not relevant)
+				);
+		
+		// Send projection matrix to the shader
+		int projectionLoc = GL30.glGetUniformLocation(programId, "projection");
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			FloatBuffer buffer = stack.mallocFloat(16); // 4x4 Matrix
+			projection.get(buffer);
+			GL30.glUniformMatrix4fv(projectionLoc, false, buffer);
+		}
+	}
+	
 	public void Delete() {
+		texture.CleanUp();
 		GL30.glDeleteProgram(programId);
 	}
 }

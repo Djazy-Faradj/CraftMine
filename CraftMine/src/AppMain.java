@@ -14,14 +14,13 @@ public class AppMain {
 			throw new IllegalStateException("Failed to initialize GLFW");
 		}
 		
-		long window = GLFW.glfwCreateWindow(Settings.WindowWidth, Settings.WindowHeight, "Craftmine", 0, 0);
+		long window = GLFW.glfwCreateWindow(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT, "Craftmine", 0, 0);
 		GLFW.glfwMakeContextCurrent(window);
 		GL.createCapabilities();
 		
 		// Instantiate a shader program and the renderer
 		ShaderProgram shaderProgram = new ShaderProgram(ShaderSource.vertexShaderSource, ShaderSource.fragmentShaderSource);
 		Renderer renderer = new Renderer(Settings.vertices);
-		TextureHandler texture = new TextureHandler("assets/terrain.png");
 		
 		// Program loop
 		while (!GLFW.glfwWindowShouldClose(window)) {
@@ -29,15 +28,18 @@ public class AppMain {
 			
 			shaderProgram.Use();
 			renderer.Render();
-			texture.Bind(0); // Bind to texture unit 0
-			GL30.glUniform1i(GL30.glGetUniformLocation(shaderProgram.GetId(), "texture"), 0);
+			
+			GLFW.glfwSetFramebufferSizeCallback(window, (win, width, height) -> {
+				GL30.glViewport(0, 0, width, height);
+				float newAspectRatio = (float) width / height;
+				shaderProgram.UpdateAspectRatio(newAspectRatio);
+			});
 			
 			GLFW.glfwSwapBuffers(window);
 			GLFW.glfwPollEvents();
 		}
 		
 		renderer.CleanUp();
-		texture.CleanUp();
 		shaderProgram.Delete();
 		GLFW.glfwDestroyWindow(window);
 		GLFW.glfwTerminate();

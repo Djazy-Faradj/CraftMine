@@ -1,7 +1,7 @@
 
 public class Settings {
-	public static final int 	WindowWidth = 800, 
-								WindowHeight = 600;
+	public static final int 	WINDOW_WIDTH = 800, 
+								WINDOW_HEIGHT = 600;
 	
 	public static float[] vertices = {
 			// SQUARE COMPOSED OF TWO TRIANGLES

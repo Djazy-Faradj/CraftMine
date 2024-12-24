@@ -6,9 +6,11 @@ public class ShaderSource {
 	            layout(location = 1) in vec2 texCoords; // for texture coordinates
 
 	            out vec2 fragTexCoords;
+	            
+	            uniform mat4 projection;
 
 	            void main() {
-	                gl_Position = vec4(position, 1.0);
+	                gl_Position = projection * vec4(position, 1.0);
 	                fragTexCoords = texCoords; // Pass it to the fragment shader
 	            }
 	            """;
