@@ -8,9 +8,10 @@ public class ShaderSource {
 	            out vec2 fragTexCoords;
 	            
 	            uniform mat4 projection;
+	            uniform mat4 model;
 
 	            void main() {
-	                gl_Position = projection * vec4(position, 1.0);
+	                gl_Position = model * projection * vec4(position, 1.0);
 	                fragTexCoords = texCoords; // Pass it to the fragment shader
 	            }
 	            """;
