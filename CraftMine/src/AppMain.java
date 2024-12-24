@@ -21,6 +21,7 @@ public class AppMain {
 		// Instantiate a shader program and the renderer
 		ShaderProgram shaderProgram = new ShaderProgram(ShaderSource.vertexShaderSource, ShaderSource.fragmentShaderSource);
 		Renderer renderer = new Renderer(Settings.vertices);
+		TextureHandler texture = new TextureHandler("assets/terrain.png");
 		
 		// Program loop
 		while (!GLFW.glfwWindowShouldClose(window)) {
@@ -28,12 +29,15 @@ public class AppMain {
 			
 			shaderProgram.Use();
 			renderer.Render();
+			texture.Bind(0); // Bind to texture unit 0
+			GL30.glUniform1i(GL30.glGetUniformLocation(shaderProgram.GetId(), "texture"), 0);
 			
 			GLFW.glfwSwapBuffers(window);
 			GLFW.glfwPollEvents();
 		}
 		
 		renderer.CleanUp();
+		texture.CleanUp();
 		shaderProgram.Delete();
 		GLFW.glfwDestroyWindow(window);
 		GLFW.glfwTerminate();

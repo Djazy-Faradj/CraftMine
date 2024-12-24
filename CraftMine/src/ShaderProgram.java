@@ -1,44 +1,48 @@
-import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 
 public class ShaderProgram {
 	private final int programId;
 	
 	public ShaderProgram(String vertexShaderSource, String fragmentShaderSource) {
-		int vertexShaderId = CompileShader(vertexShaderSource, GL20.GL_VERTEX_SHADER);
-		int fragmentShaderId = CompileShader(fragmentShaderSource, GL20.GL_FRAGMENT_SHADER);
+		int vertexShaderId = CompileShader(vertexShaderSource, GL30.GL_VERTEX_SHADER);
+		int fragmentShaderId = CompileShader(fragmentShaderSource, GL30.GL_FRAGMENT_SHADER);
 		
 		// Link shaders into a program
-		programId = GL20.glCreateProgram();
-		GL20.glAttachShader(programId, vertexShaderId);
-		GL20.glAttachShader(programId, fragmentShaderId);
-		GL20.glLinkProgram(programId);
+		programId = GL30.glCreateProgram();
+		GL30.glAttachShader(programId, vertexShaderId);
+		GL30.glAttachShader(programId, fragmentShaderId);
+		GL30.glLinkProgram(programId);
 		
-		if (GL20.glGetProgrami(programId, GL20.GL_LINK_STATUS) == GL20.GL_FALSE) {
-			throw new RuntimeException("Error linking shader program: " + GL20.glGetProgramInfoLog(programId));
+		if (GL30.glGetProgrami(programId, GL30.GL_LINK_STATUS) == GL30.GL_FALSE) {
+			throw new RuntimeException("Error linking shader program: " + GL30.glGetProgramInfoLog(programId));
 		}
 		
 		// Delete shaders after linking
-		GL20.glDeleteShader(vertexShaderId);
-		GL20.glDeleteShader(fragmentShaderId);		
+		GL30.glDeleteShader(vertexShaderId);
+		GL30.glDeleteShader(fragmentShaderId);		
 	}
 	
 	private int CompileShader(String shaderSource, int type) {
-		int shaderId = GL20.glCreateShader(type);
-		GL20.glShaderSource(shaderId, shaderSource);
-		GL20.glCompileShader(shaderId);
+		int shaderId = GL30.glCreateShader(type);
+		GL30.glShaderSource(shaderId, shaderSource);
+		GL30.glCompileShader(shaderId);
 		
-		if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL20.GL_FALSE) {
-			throw new RuntimeException("Error compiling shader: " + GL20.glGetShaderInfoLog(shaderId));
+		if (GL30.glGetShaderi(shaderId, GL30.GL_COMPILE_STATUS) == GL30.GL_FALSE) {
+			throw new RuntimeException("Error compiling shader: " + GL30.glGetShaderInfoLog(shaderId));
 		}
 		
 		return shaderId;
 	}
 	
 	public void Use() {
-		GL20.glUseProgram(programId);
+		GL30.glUseProgram(programId);
+	}
+	
+	public int GetId() {
+		return programId;
 	}
 	
 	public void Delete() {
-		GL20.glDeleteProgram(programId);
+		GL30.glDeleteProgram(programId);
 	}
 }

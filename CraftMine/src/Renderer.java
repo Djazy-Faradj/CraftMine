@@ -20,18 +20,17 @@ public class Renderer {
 		MemoryUtil.memFree(vertexBuffer);
 		
 		// Position Attribute
-		GL30.glVertexAttribPointer(0, 2, GL30.GL_FLOAT, false, 5 * Float.BYTES, 0);
+		GL30.glVertexAttribPointer(0, 3, GL30.GL_FLOAT, false, 5 * Float.BYTES, 0);
 		GL30.glEnableVertexAttribArray(0);
-
-		// Color Attribute
-		GL30.glVertexAttribPointer(1, 3, GL30.GL_FLOAT, false, 5 * Float.BYTES, 2 * Float.BYTES);
+		
+		// Texture Coordinate Attribute
+		GL30.glVertexAttribPointer(1, 2, GL30.GL_FLOAT, false, 5 * Float.BYTES, 3 * Float.BYTES);
 		GL30.glEnableVertexAttribArray(1);
 	}
 	
 	public void Render() {
 		GL30.glBindVertexArray(vaoId);
-		GL30.glDrawArrays(GL30.GL_TRIANGLES, 0, 3);
-		GL30.glBindVertexArray(0);
+		GL30.glDrawArrays(GL30.GL_TRIANGLES, 0, 6);
 	}
 	
 	public void CleanUp() {

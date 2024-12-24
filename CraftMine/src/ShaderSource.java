@@ -2,24 +2,28 @@
 public class ShaderSource {
 	  public static String vertexShaderSource = """
 	            #version 330 core
-	            layout(location = 0) in vec2 position;
-	            layout(location = 1) in vec3 color;
+	            layout(location = 0) in vec3 position;
+	            layout(location = 1) in vec2 texCoords; // for texture coordinates
 
-	            out vec3 fragColor;
+	            out vec2 fragTexCoords;
 
 	            void main() {
-	                gl_Position = vec4(position, 0.0, 1.0);
-	                fragColor = color;
+	                gl_Position = vec4(position, 1.0);
+	                fragTexCoords = texCoords; // Pass it to the fragment shader
 	            }
 	            """;
 
      public static String fragmentShaderSource = """
 	            #version 330 core
-	            in vec3 fragColor;
+	            in vec2 fragTexCoords; // Interpolated texture coordinates
+	            
 	            out vec4 color;
+	            
+	            uniform sampler2D texture0; // The texture
 
 	            void main() {
-	                color = vec4(fragColor, 1.0);
+	            	vec4 fragColor = texture(texture0, fragTexCoords); // Sample the texture
+	                color = fragColor; // Combine with vertex color
 	            }
 	            """;
 	
