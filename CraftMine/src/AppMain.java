@@ -22,6 +22,16 @@ public class AppMain {
 		ShaderProgram shaderProgram = new ShaderProgram(ShaderSource.vertexShaderSource, ShaderSource.fragmentShaderSource);
 		Renderer renderer = new Renderer(Settings.vertices);
 		
+		// Get initial framebuffer size
+		int[] width = new int[1];
+		int[] height = new int[1];
+		GLFW.glfwGetFramebufferSize(window, width, height);
+		
+		
+		// Prevents screen from being black upon opening program
+		shaderProgram.Use();
+		shaderProgram.UpdateAspectRatio(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
+		
 		// Program loop
 		while (!GLFW.glfwWindowShouldClose(window)) {
 			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT);
@@ -29,10 +39,9 @@ public class AppMain {
 			shaderProgram.Use();
 			renderer.Render();
 			
-			GLFW.glfwSetFramebufferSizeCallback(window, (win, width, height) -> {
-				GL30.glViewport(0, 0, width, height);
-				float newAspectRatio = (float) width / height;
-				shaderProgram.UpdateAspectRatio(newAspectRatio);
+			GLFW.glfwSetFramebufferSizeCallback(window, (win, nwidth, nheight) -> {
+				GL30.glViewport(0, 0, nwidth, nheight);
+				shaderProgram.UpdateAspectRatio(nwidth, nheight);
 			});
 			
 			GLFW.glfwSwapBuffers(window);

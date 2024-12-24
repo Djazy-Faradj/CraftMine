@@ -7,14 +7,12 @@ import org.joml.Matrix4f;
 public class ShaderProgram {
 	private final int programId;
 	private final TextureHandler texture;
-	private float aspectRatio = (float) Settings.WINDOW_WIDTH / Settings.WINDOW_HEIGHT;
+	private float aspectRatio;
 	
 	public ShaderProgram(String vertexShaderSource, String fragmentShaderSource) {
 		int vertexShaderId = CompileShader(vertexShaderSource, GL30.GL_VERTEX_SHADER);
 		int fragmentShaderId = CompileShader(fragmentShaderSource, GL30.GL_FRAGMENT_SHADER);
 		texture = new TextureHandler("assets/terrain.png");
-		
-		CreateProjectionMatrix();
 		
 		// Link shaders into a program
 		programId = GL30.glCreateProgram();
@@ -53,8 +51,8 @@ public class ShaderProgram {
 		return programId;
 	}
 	
-	public void UpdateAspectRatio(float ar) {
-		aspectRatio = ar;
+	public void UpdateAspectRatio(int newWidth, int newHeight) {
+		aspectRatio = (float) newWidth / newHeight;
 		CreateProjectionMatrix();
 	}
 	
