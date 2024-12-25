@@ -1,5 +1,5 @@
 // Djazy Faradj
-// Last Updated: 2024-12-23
+// Last Updated: 2024-12-25
 import java.nio.FloatBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
@@ -52,7 +52,7 @@ public class AppMain {
 		UpdateGameState(GAME_STATE.PLAY); 
 		
 		// Instantiate camera
-		Camera camera = new Camera(new Vector3f(0.0f, 0.0f, 0.0f));
+		Camera camera = new Camera(new Vector3f(0.0f, 0.0f, 1.0f));
 		
 		int modelLoc;
 		int viewLoc;
@@ -65,7 +65,7 @@ public class AppMain {
 			float currentFrame = (float) GLFW.glfwGetTime();
 			deltaTime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
-			System.out.printf("FPS: %.2f\n", 1000/deltaTime); // Print FPS
+			//System.out.printf("FPS: %.2f\n", 1000/deltaTime); // Print FPS
 			
 			shaderProgram.Use();
 			renderer.Render();
@@ -76,12 +76,13 @@ public class AppMain {
 			});
 			// Gets called when mouse moves
 			GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {
-				float xOffset = (float) xpos - lastX ;
-				float yOffset = lastY - (float) ypos; // Reversed since y-coordinates go from bottom to top
-				lastX = (float) xpos;
-				lastY = (float) ypos;
-				
-				camera.ProcessMouse(xOffset, yOffset, true);
+				if (currentState == GAME_STATE.PLAY) {
+					float xOffset = (float) xpos - lastX ;
+					float yOffset = lastY - (float) ypos; // Reversed since y-coordinates go from bottom to top
+					lastX = (float) xpos;
+					lastY = (float) ypos;
+					camera.ProcessMouse(xOffset, yOffset, true);
+				}
 			});
 			
 			// Apply tranformations
@@ -119,7 +120,7 @@ public class AppMain {
 	}
 	
 	public static void UpdateGameState(GAME_STATE newState) {
-		System.out.println("Updating game state..");
+		System.out.println("Updating game state to: " + newState);
 		currentState = newState;
 	}
 

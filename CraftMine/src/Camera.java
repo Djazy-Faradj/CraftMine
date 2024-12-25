@@ -10,20 +10,27 @@ public class Camera {
 		this.front = new Vector3f(0.0f, 0.0f, -1.0f);
 		this.up = new Vector3f(0.0f, 1.0f, 0.0f);
 		this.pitch = 0.0f;
-		this.yaw = 90.0f; // Looking along the negative Z-axis by default
+		this.yaw = -90.0f; // Looking along the negative Z-axis by default
 	}
 	
 	public Matrix4f GetViewMatrix() {
-		Vector3f center = new Vector3f(this.position);
+		Vector3f center = new Vector3f();
 		position.add(front, center); // center = position + front
 		return new Matrix4f().lookAt(position, center, up);
 	}
 	
 	public void ProcessKeyboard(Vector3f direction, float deltaTime) {
 		float velocity = Settings.CAMERA_VELOCITY * deltaTime;
-		if (direction.x != 0) position.x += direction.x * velocity;
-		if (direction.y != 0) position.y += direction.y * velocity;
-		if (direction.z != 0) position.z += direction.z * velocity;
+	    Vector3f movement = new Vector3f();
+
+	    if (direction.z != 0) {
+	        movement.sub(new Vector3f(front).mul(direction.z * velocity)); // Forward/backward
+	    }
+	    if (direction.x != 0) {
+	        Vector3f right = new Vector3f(front).cross(up, new Vector3f()).normalize();
+	        movement.add(new Vector3f(right).mul(direction.x * velocity)); // Left/right
+	    }
+	    position.add(movement);
 		//System.out.println(position);
 	}
 	

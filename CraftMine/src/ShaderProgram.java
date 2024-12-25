@@ -53,15 +53,16 @@ public class ShaderProgram {
 	
 	public void UpdateAspectRatio(int newWidth, int newHeight) {
 		aspectRatio = (float) newWidth / newHeight;
-		CreateProjectionMatrix();
+		GetProjectionMatrix();
 	}
 	
-	public void CreateProjectionMatrix() {
-		// Create orthographic projection matrix
-		Matrix4f projection = new Matrix4f().ortho(
-				-aspectRatio, aspectRatio, 	// Left, Right (scaled by aspect ratio)
-				-1.0f, 1.0f,				// Bottom, Top
-				-1.0f, 1.0f					// Near, Far (Not relevant)
+	public void GetProjectionMatrix() {
+		// Create perspective projection matrix
+		Matrix4f projection = new Matrix4f().perspective(
+				(float)	Math.toRadians(Settings.CAMERA_FOV),
+				aspectRatio,
+				Settings.CAMERA_ZNEAR,
+				Settings.CAMERA_ZFAR
 				);
 		
 		// Send projection matrix to the shader
