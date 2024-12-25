@@ -60,7 +60,7 @@ public class AppMain {
 			float currentFrame = (float) GLFW.glfwGetTime();
 			deltaTime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
-			//System.out.printf("FPS: %.2f\n", 1000/deltaTime); // Print FPS
+			System.out.printf("FPS: %.2f\n", 1/deltaTime); // Print FPS
 			
 			
 			shaderProgram.SendMatricesToShader(camera, transform);
@@ -81,6 +81,8 @@ public class AppMain {
 					camera.ProcessMouse(xOffset, yOffset, true);
 				}
 			});
+			
+			camera.UpdateCameraPosition();
 			
 			// Gets called when window is resized
 			GLFW.glfwSetFramebufferSizeCallback(window, (win, nwidth, nheight) -> {

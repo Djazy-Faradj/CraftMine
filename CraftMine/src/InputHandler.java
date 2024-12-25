@@ -10,14 +10,42 @@ public class InputHandler {
 				AppMain.UpdateGameState(AppMain.GAME_STATE.PLAY);
 			break;
 		case PLAY: // Input handler when in "play state"
-			if (key == GLFW.GLFW_KEY_W)
-				camera.ProcessKeyboard(new Vector3f(0.0f, 0.0f, -1.0f), AppMain.deltaTime);
-			if (key == GLFW.GLFW_KEY_S)
-				camera.ProcessKeyboard(new Vector3f(0.0f, 0.0f, 1.0f), AppMain.deltaTime);
-			if (key == GLFW.GLFW_KEY_A)
-				camera.ProcessKeyboard(new Vector3f(-1.0f, 0.0f, 0.0f), AppMain.deltaTime);
-			if (key == GLFW.GLFW_KEY_D)
-				camera.ProcessKeyboard(new Vector3f(1.0f, 0.0f, 0.0f), AppMain.deltaTime);
+			if (key == GLFW.GLFW_KEY_W) {
+				if (action == GLFW.GLFW_PRESS)
+					camera.direction.z -= 1.0f;
+				camera.ProcessKeyboard();
+					if (action == GLFW.GLFW_RELEASE) {
+						camera.direction.z += 1.0f;
+						camera.ProcessKeyboard();
+					}
+			}
+			if (key == GLFW.GLFW_KEY_S) {
+				if (action == GLFW.GLFW_PRESS)
+					camera.direction.z += 1.0f;
+				camera.ProcessKeyboard();
+					if (action == GLFW.GLFW_RELEASE) {
+						camera.direction.z -= 1.0f;
+						camera.ProcessKeyboard();
+					}
+			}
+			if (key == GLFW.GLFW_KEY_A) {
+				if (action == GLFW.GLFW_PRESS)
+					camera.direction.x -= 1.0f;
+				camera.ProcessKeyboard();
+					if (action == GLFW.GLFW_RELEASE) {
+						camera.direction.x += 1.0f;
+						camera.ProcessKeyboard();
+					}
+			}
+			if (key == GLFW.GLFW_KEY_D) {
+				if (action == GLFW.GLFW_PRESS)
+					camera.direction.x += 1.0f;
+				camera.ProcessKeyboard();
+					if (action == GLFW.GLFW_RELEASE) {
+						camera.direction.x -= 1.0f;
+						camera.ProcessKeyboard();
+					}
+			}
 			
 			
 			if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS)
