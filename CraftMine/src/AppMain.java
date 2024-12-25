@@ -1,10 +1,8 @@
 // Djazy Faradj
 // Last Updated: 2024-12-25
-import java.nio.FloatBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.system.MemoryStack;
 import org.joml.Vector3f;
 
 public class AppMain {
@@ -54,9 +52,6 @@ public class AppMain {
 		// Instantiate camera
 		Camera camera = new Camera(new Vector3f(0.0f, 0.0f, 1.0f));
 		
-		int modelLoc;
-		int viewLoc;
-		
 		// Program loop
 		while (!GLFW.glfwWindowShouldClose(window)) {
 			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT);
@@ -67,6 +62,8 @@ public class AppMain {
 			lastFrame = currentFrame;
 			//System.out.printf("FPS: %.2f\n", 1000/deltaTime); // Print FPS
 			
+			
+			shaderProgram.SendMatricesToShader(camera, transform);
 			shaderProgram.Use();
 			renderer.Render();
 
@@ -85,27 +82,17 @@ public class AppMain {
 				}
 			});
 			
-			// Apply tranformations
-			modelLoc = GL30.glGetUniformLocation(shaderProgram.GetId(), "model");
-			try (MemoryStack stack = MemoryStack.stackPush()) {
-				FloatBuffer buffer = stack.mallocFloat(16);
-				transform.GetModelMatrix().get(buffer);
-				GL30.glUniformMatrix4fv(modelLoc, false, buffer);
-			}
-			
-			// Pass view matrix to shader
-			viewLoc = GL30.glGetUniformLocation(shaderProgram.GetId(), "view");
-			try (MemoryStack stack = MemoryStack.stackPush()) {
-				FloatBuffer buffer = stack.mallocFloat(16);
-				camera.GetViewMatrix().get(buffer);
-				GL30.glUniformMatrix4fv(viewLoc, false, buffer);
-			}
-			
 			// Gets called when window is resized
 			GLFW.glfwSetFramebufferSizeCallback(window, (win, nwidth, nheight) -> {
 				GL30.glViewport(0, 0, nwidth, nheight);
 				shaderProgram.UpdateAspectRatio(nwidth, nheight);
 			});
+			
+			// Upon changing game state, change input mode of cursor
+			if (currentState == GAME_STATE.PLAY && GLFW.glfwGetInputMode(window, GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_NORMAL)
+				GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+			if (currentState == GAME_STATE.MENU && GLFW.glfwGetInputMode(window, GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_DISABLED)
+				GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
 			
 			GLFW.glfwSwapBuffers(window);
 			GLFW.glfwPollEvents();
@@ -119,8 +106,8 @@ public class AppMain {
 		System.out.println("Closing Craftmine...");
 	}
 	
-	public static void UpdateGameState(GAME_STATE newState) {
-		System.out.println("Updating game state to: " + newState);
+	public static void UpdateGameState(GAME_STATE newState) { // Takes care of game state changes (ie cursor visibility, camera mobility, etc)
+		//System.out.println("Updating game state to: " + newState);
 		currentState = newState;
 	}
 

@@ -20,7 +20,7 @@ public class Camera {
 	}
 	
 	public void ProcessKeyboard(Vector3f direction, float deltaTime) {
-		float velocity = Settings.CAMERA_VELOCITY * deltaTime;
+		float velocity = Settings.CAMERA_VELOCITY * deltaTime * 1000;
 	    Vector3f movement = new Vector3f();
 
 	    if (direction.z != 0) {
@@ -30,15 +30,17 @@ public class Camera {
 	        Vector3f right = new Vector3f(front).cross(up, new Vector3f()).normalize();
 	        movement.add(new Vector3f(right).mul(direction.x * velocity)); // Left/right
 	    }
-	    position.add(movement);
+	    position.add(movement.x, 0.0f, movement.z);
 		//System.out.println(position);
 	}
 	
 	public void ProcessMouse(float xOffset, float yOffset, boolean constraintPitch) {
 		float sensitivity = Settings.CAMERA_SENSITIVITY;
-		yaw += (xOffset * sensitivity);
-		yaw %= 360;
-		pitch += yOffset * sensitivity;
+		if (xOffset > -90 && xOffset < 90 && yOffset > -90 && yOffset < 90) { // This condition prevents camera from "snapping" every time game pauses and resumes
+			yaw += (xOffset * sensitivity);
+			yaw %= 360;
+			pitch += yOffset * sensitivity;
+		}
 		
 		if (constraintPitch) {
 			if (pitch > 89.0f) pitch = 89.0f;

@@ -3,8 +3,8 @@ public class Settings {
 	public static final int 	WINDOW_WIDTH = 800, 
 								WINDOW_HEIGHT = 600;
 	
-	public static float 	CAMERA_VELOCITY = 95.0f,
-						 	CAMERA_SENSITIVITY = 1.0f,
+	public static float 	CAMERA_VELOCITY = 0.1f, // m/s
+						 	CAMERA_SENSITIVITY = 0.3f,
 							CAMERA_FOV = 90.0f,
 							CAMERA_ZNEAR = 0.1f,
 							CAMERA_ZFAR = 100.0f;

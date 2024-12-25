@@ -8,6 +8,7 @@ public class ShaderProgram {
 	private final int programId;
 	private final TextureHandler texture;
 	private float aspectRatio;
+	private Matrix4f projection;
 	
 	public ShaderProgram(String vertexShaderSource, String fragmentShaderSource) {
 		int vertexShaderId = CompileShader(vertexShaderSource, GL30.GL_VERTEX_SHADER);
@@ -56,22 +57,36 @@ public class ShaderProgram {
 		GetProjectionMatrix();
 	}
 	
-	public void GetProjectionMatrix() {
+	private void GetProjectionMatrix() {
 		// Create perspective projection matrix
-		Matrix4f projection = new Matrix4f().perspective(
+		projection = new Matrix4f().perspective(
 				(float)	Math.toRadians(Settings.CAMERA_FOV),
 				aspectRatio,
 				Settings.CAMERA_ZNEAR,
 				Settings.CAMERA_ZFAR
 				);
-		
-		// Send projection matrix to the shader
-		int projectionLoc = GL30.glGetUniformLocation(programId, "projection");
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FloatBuffer buffer = stack.mallocFloat(16); // 4x4 Matrix
-			projection.get(buffer);
-			GL30.glUniformMatrix4fv(projectionLoc, false, buffer);
-		}
+	}
+	
+	public void SendMatricesToShader(Camera camera, Transform transform) {
+			// Send matrices to shader
+			int projectionLoc = GL30.glGetUniformLocation(programId, "projection"); // PROJECTION MATRIX
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				FloatBuffer buffer = stack.mallocFloat(16); // 4x4 Matrix
+				projection.get(buffer);
+				GL30.glUniformMatrix4fv(projectionLoc, false, buffer);
+			}
+			int modelLoc = GL30.glGetUniformLocation(programId, "model");			// MODEL MATRIX
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				FloatBuffer buffer = stack.mallocFloat(16);
+				transform.GetModelMatrix().get(buffer);
+				GL30.glUniformMatrix4fv(modelLoc, false, buffer);
+			}
+			int viewLoc = GL30.glGetUniformLocation(programId, "view");				// VIEW MATRIX
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				FloatBuffer buffer = stack.mallocFloat(16);
+				camera.GetViewMatrix().get(buffer);
+				GL30.glUniformMatrix4fv(viewLoc, false, buffer);
+			}
 	}
 	
 	public void Delete() {
