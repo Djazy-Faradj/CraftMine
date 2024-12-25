@@ -5,7 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
+import org.joml.Vector3f;
 
 public class AppMain {
 
@@ -15,6 +15,11 @@ public class AppMain {
 	}
 	
 	public static GAME_STATE currentState;
+
+	// To start game timer
+	static float lastFrame = 0.0f, deltaTime = 0.0f;
+
+	private static float lastX = 0.0f, lastY = 0.0f;
 	
 	public static void main(String[] args) {
 		System.out.println("Opening Craftmine...");
@@ -31,7 +36,6 @@ public class AppMain {
 		ShaderProgram shaderProgram = new ShaderProgram(ShaderSource.vertexShaderSource, ShaderSource.fragmentShaderSource);
 		Renderer renderer = new Renderer(Settings.vertices);
 		Transform transform = new Transform();
-		int modelLoc;
 		InputHandler inputHandler = new InputHandler();
 		
 		// Get initial framebuffer size
@@ -47,16 +51,37 @@ public class AppMain {
 		// Set initial game state to "play"
 		UpdateGameState(GAME_STATE.PLAY); 
 		
+		// Instantiate camera
+		Camera camera = new Camera(new Vector3f(0.0f, 0.0f, 0.0f));
+		
+		int modelLoc;
+		int viewLoc;
+		
 		// Program loop
 		while (!GLFW.glfwWindowShouldClose(window)) {
 			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT);
+			
+			// per-frame timing
+			float currentFrame = (float) GLFW.glfwGetTime();
+			deltaTime = currentFrame - lastFrame;
+			lastFrame = currentFrame;
+			System.out.printf("FPS: %.2f\n", 1000/deltaTime); // Print FPS
 			
 			shaderProgram.Use();
 			renderer.Render();
 
 			// Gets called when key is pressed
 			GLFW.glfwSetKeyCallback(window, (win, key, scancode, action, mods) -> {
-				inputHandler.Call(key, action, scancode, transform);
+				inputHandler.Call(key, action, scancode, camera);
+			});
+			// Gets called when mouse moves
+			GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {
+				float xOffset = (float) xpos - lastX ;
+				float yOffset = lastY - (float) ypos; // Reversed since y-coordinates go from bottom to top
+				lastX = (float) xpos;
+				lastY = (float) ypos;
+				
+				camera.ProcessMouse(xOffset, yOffset, true);
 			});
 			
 			// Apply tranformations
@@ -67,6 +92,13 @@ public class AppMain {
 				GL30.glUniformMatrix4fv(modelLoc, false, buffer);
 			}
 			
+			// Pass view matrix to shader
+			viewLoc = GL30.glGetUniformLocation(shaderProgram.GetId(), "view");
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				FloatBuffer buffer = stack.mallocFloat(16);
+				camera.GetViewMatrix().get(buffer);
+				GL30.glUniformMatrix4fv(viewLoc, false, buffer);
+			}
 			
 			// Gets called when window is resized
 			GLFW.glfwSetFramebufferSizeCallback(window, (win, nwidth, nheight) -> {

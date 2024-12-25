@@ -3,7 +3,11 @@ public class Settings {
 	public static final int 	WINDOW_WIDTH = 800, 
 								WINDOW_HEIGHT = 600;
 	
-	private static int xOffset = 3, yOffset = 0;
+	public static float CAMERA_VELOCITY = 95.0f,
+						 CAMERA_SENSITIVITY = 1.0f;
+	
+	private static int xOffset = 3, yOffset = 0; // used for debugging and choosing square texture (to be deleted)
+	
 	
 	public static float[] vertices = {
 			// SQUARE COMPOSED OF TWO TRIANGLES
