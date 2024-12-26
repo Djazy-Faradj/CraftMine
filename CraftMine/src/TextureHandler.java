@@ -38,16 +38,16 @@ public class TextureHandler {
 		STBImage.stbi_image_free(image);
 	}
 	
-	public void Bind(int unit) {
+	public void bind(int unit) {
 		GL30.glActiveTexture(textureId + unit);
 		GL30.glBindTexture(GL30.GL_TEXTURE_2D, textureId);
 	}
 	
-	public void CleanUp() {
+	public void cleanUp() {
 		GL30.glDeleteTextures(textureId);
 	}
 	
-	public int GetId() {
+	public int getId() {
 		return textureId;
 	}
 }

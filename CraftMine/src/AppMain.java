@@ -1,8 +1,9 @@
 // Djazy Faradj
-// Last Updated: 2024-12-25
+// Last Updated: 2024-12-26
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL30;
+
 import org.joml.Vector3f;
 
 public class AppMain {
@@ -12,12 +13,12 @@ public class AppMain {
 		MENU
 	}
 	
-	public static GAME_STATE currentState;
+	public static GAME_STATE currentGameState;
 
 	// To start game timer
-	static float lastFrame = 0.0f, deltaTime = 0.0f;
+	public static float lastFrame = 0.0f, deltaTime = 0.0f, gdeltaTime = 0.0f, kdeltaTime = 0.0f;
 
-	private static float lastX = 0.0f, lastY = 0.0f;
+	private static float lastX = 0.0f, lastY = 0.0f, xOffset = 0.0f, yOffset = 0.0f;
 	
 	public static void main(String[] args) {
 		System.out.println("Opening Craftmine...");
@@ -28,6 +29,7 @@ public class AppMain {
 		
 		long window = GLFW.glfwCreateWindow(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT, "Craftmine", 0, 0);
 		GLFW.glfwMakeContextCurrent(window);
+		
 		GL.createCapabilities();
 		
 		// Instantiate a shader program and the renderer
@@ -43,74 +45,87 @@ public class AppMain {
 		
 		
 		// Prevents screen from being black upon opening program
-		shaderProgram.Use();
-		shaderProgram.UpdateAspectRatio(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
+		shaderProgram.use();
+		shaderProgram.updateAspectRatio(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
 		
 		// Set initial game state to "play"
-		UpdateGameState(GAME_STATE.PLAY); 
+		changeGameState(GAME_STATE.PLAY); 
 		
-		// Instantiate camera
-		Camera camera = new Camera(new Vector3f(0.0f, 0.0f, 1.0f));
+		// Instantiate player
+		Player p1 = new Player(new Vector3f(0.0f, 0.0f, 1.0f));
+
+		// Gets called when mouse moves
+		GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {
+			xOffset += (float) xpos - lastX ;
+			yOffset += lastY - (float) ypos; // Reversed since y-coordinates go from bottom to top
+			lastX = (float) xpos;
+			lastY = (float) ypos;
+		});
+		
+		// Gets called when window is resized
+		GLFW.glfwSetFramebufferSizeCallback(window, (win, nwidth, nheight) -> {
+			GL30.glViewport(0, 0, nwidth, nheight);
+			shaderProgram.updateAspectRatio(nwidth, nheight);
+		});
+
+		// Gets called when key is pressed
+		GLFW.glfwSetKeyCallback(window, (win, key, scancode, action, mods) -> {
+			inputHandler.call(key, action, scancode, p1);
+		});
+		
+		float lastFrame = (float) GLFW.glfwGetTime();
 		
 		// Program loop
 		while (!GLFW.glfwWindowShouldClose(window)) {
 			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
 			
 			// per-frame timing
 			float currentFrame = (float) GLFW.glfwGetTime();
 			deltaTime = currentFrame - lastFrame;
 			lastFrame = currentFrame;
-			System.out.printf("FPS: %.2f\n", 1/deltaTime); // Print FPS
 			
+			gdeltaTime += deltaTime;
 			
-			shaderProgram.SendMatricesToShader(camera, transform);
-			shaderProgram.Use();
-			renderer.Render();
-
-			// Gets called when key is pressed
-			GLFW.glfwSetKeyCallback(window, (win, key, scancode, action, mods) -> {
-				inputHandler.Call(key, action, scancode, camera);
-			});
-			// Gets called when mouse moves
-			GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {
-				if (currentState == GAME_STATE.PLAY) {
-					float xOffset = (float) xpos - lastX ;
-					float yOffset = lastY - (float) ypos; // Reversed since y-coordinates go from bottom to top
-					lastX = (float) xpos;
-					lastY = (float) ypos;
-					camera.ProcessMouse(xOffset, yOffset, true);
+			if (gdeltaTime >= 1.0f / Settings.FPS_LIMIT) { // Gets executed once per frame, limited by fps
+				if (currentGameState == GAME_STATE.PLAY) {
+					kdeltaTime = gdeltaTime;
+					p1.getCamera().processMouse(xOffset, yOffset, true);
+					xOffset = 0.0f;
+					yOffset = 0.0f;
 				}
-			});
+				// Upon changing game state, change input mode of cursor
+				if (currentGameState == GAME_STATE.PLAY && GLFW.glfwGetInputMode(window, GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_NORMAL)
+					GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+				if (currentGameState == GAME_STATE.MENU && GLFW.glfwGetInputMode(window, GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_DISABLED)
+					GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+				
+
+				// Update all player at each frame
+				p1.updatePlayer();
+				
+				gdeltaTime = 0;
+			}
 			
-			camera.UpdateCameraPosition();
-			
-			// Gets called when window is resized
-			GLFW.glfwSetFramebufferSizeCallback(window, (win, nwidth, nheight) -> {
-				GL30.glViewport(0, 0, nwidth, nheight);
-				shaderProgram.UpdateAspectRatio(nwidth, nheight);
-			});
-			
-			// Upon changing game state, change input mode of cursor
-			if (currentState == GAME_STATE.PLAY && GLFW.glfwGetInputMode(window, GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_NORMAL)
-				GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
-			if (currentState == GAME_STATE.MENU && GLFW.glfwGetInputMode(window, GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_DISABLED)
-				GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+			shaderProgram.sendMatricesToShader(p1.getCamera(), transform);
+			shaderProgram.use();
+			renderer.Render();
 			
 			GLFW.glfwSwapBuffers(window);
 			GLFW.glfwPollEvents();
 		}
 		
 		renderer.CleanUp();
-		shaderProgram.Delete();
+		shaderProgram.delete();
 		GLFW.glfwDestroyWindow(window);
 		GLFW.glfwTerminate();
 		
 		System.out.println("Closing Craftmine...");
 	}
 	
-	public static void UpdateGameState(GAME_STATE newState) { // Takes care of game state changes (ie cursor visibility, camera mobility, etc)
-		//System.out.println("Updating game state to: " + newState);
-		currentState = newState;
+	public static void changeGameState(GAME_STATE newState) { // Takes care of game state changes (ie cursor visibility, camera mobility, etc)
+		currentGameState = newState;
+		System.out.println(newState);
 	}
 
 }

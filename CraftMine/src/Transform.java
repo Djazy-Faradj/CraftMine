@@ -8,25 +8,25 @@ public class Transform {
 		modelMatrix = new Matrix4f();
 	}
 	
-	public Matrix4f GetModelMatrix() {
+	public Matrix4f getModelMatrix() {
 		return modelMatrix;
 	}
 	
-	public void Reset() {
+	public void reset() {
 		modelMatrix.identity();
 	}
 	
-	public Transform Translate(float x, float y, float z) {
+	public Transform translate(float x, float y, float z) {
 		modelMatrix.translate(x, y, z);
 		return this;
 	}
 	
-	public Transform Rotate(float angle, float x, float y, float z) {
+	public Transform rotate(float angle, float x, float y, float z) {
 		modelMatrix.rotate(angle, x, y, z);
 		return this;
 	}
 	
-	public Transform Scale(float factor) {
+	public Transform scale(float factor) {
 		modelMatrix.scale(factor);
 		return this;
 	}

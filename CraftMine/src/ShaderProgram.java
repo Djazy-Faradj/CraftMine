@@ -11,8 +11,8 @@ public class ShaderProgram {
 	private Matrix4f projection;
 	
 	public ShaderProgram(String vertexShaderSource, String fragmentShaderSource) {
-		int vertexShaderId = CompileShader(vertexShaderSource, GL30.GL_VERTEX_SHADER);
-		int fragmentShaderId = CompileShader(fragmentShaderSource, GL30.GL_FRAGMENT_SHADER);
+		int vertexShaderId = compileShader(vertexShaderSource, GL30.GL_VERTEX_SHADER);
+		int fragmentShaderId = compileShader(fragmentShaderSource, GL30.GL_FRAGMENT_SHADER);
 		texture = new TextureHandler("assets/terrain.png");
 		
 		// Link shaders into a program
@@ -30,7 +30,7 @@ public class ShaderProgram {
 		GL30.glDeleteShader(fragmentShaderId);		
 	}
 	
-	private int CompileShader(String shaderSource, int type) {
+	private int compileShader(String shaderSource, int type) {
 		int shaderId = GL30.glCreateShader(type);
 		GL30.glShaderSource(shaderId, shaderSource);
 		GL30.glCompileShader(shaderId);
@@ -42,22 +42,22 @@ public class ShaderProgram {
 		return shaderId;
 	}
 	
-	public void Use() {
+	public void use() {
 		GL30.glUseProgram(programId);
-		texture.Bind(0); // Bind to texture unit 0
+		texture.bind(0); // Bind to texture unit 0
 		GL30.glUniform1i(GL30.glGetUniformLocation(programId, "texture"), 0);
 	}
 	
-	public int GetId() {
+	public int getId() {
 		return programId;
 	}
 	
-	public void UpdateAspectRatio(int newWidth, int newHeight) {
+	public void updateAspectRatio(int newWidth, int newHeight) {
 		aspectRatio = (float) newWidth / newHeight;
-		GetProjectionMatrix();
+		getProjectionMatrix();
 	}
 	
-	private void GetProjectionMatrix() {
+	private void getProjectionMatrix() {
 		// Create perspective projection matrix
 		projection = new Matrix4f().perspective(
 				(float)	Math.toRadians(Settings.CAMERA_FOV),
@@ -67,7 +67,7 @@ public class ShaderProgram {
 				);
 	}
 	
-	public void SendMatricesToShader(Camera camera, Transform transform) {
+	public void sendMatricesToShader(Camera camera, Transform transform) {
 			// Send matrices to shader
 			int projectionLoc = GL30.glGetUniformLocation(programId, "projection"); // PROJECTION MATRIX
 			try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -78,19 +78,19 @@ public class ShaderProgram {
 			int modelLoc = GL30.glGetUniformLocation(programId, "model");			// MODEL MATRIX
 			try (MemoryStack stack = MemoryStack.stackPush()) {
 				FloatBuffer buffer = stack.mallocFloat(16);
-				transform.GetModelMatrix().get(buffer);
+				transform.getModelMatrix().get(buffer);
 				GL30.glUniformMatrix4fv(modelLoc, false, buffer);
 			}
 			int viewLoc = GL30.glGetUniformLocation(programId, "view");				// VIEW MATRIX
 			try (MemoryStack stack = MemoryStack.stackPush()) {
 				FloatBuffer buffer = stack.mallocFloat(16);
-				camera.GetViewMatrix().get(buffer);
+				camera.getViewMatrix().get(buffer);
 				GL30.glUniformMatrix4fv(viewLoc, false, buffer);
 			}
 	}
 	
-	public void Delete() {
-		texture.CleanUp();
+	public void delete() {
+		texture.cleanUp();
 		GL30.glDeleteProgram(programId);
 	}
 }
