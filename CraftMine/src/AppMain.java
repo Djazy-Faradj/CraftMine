@@ -1,5 +1,5 @@
 // Djazy Faradj
-// Last Updated: 2024-12-26
+// Last Updated: 2024-12-29
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL30;
@@ -32,6 +32,15 @@ public class AppMain {
 		
 		GL.createCapabilities();
 		
+		// Depth testing to avoid drawing stuff in the background at the front
+		GL30.glEnable(GL30.GL_DEPTH_TEST);
+		GL30.glDepthFunc(GL30.GL_LESS);
+		
+		// Culling
+		GL30.glEnable(GL30.GL_CULL_FACE);
+		GL30.glCullFace(GL30.GL_BACK);
+		GL30.glFrontFace(GL30.GL_CCW);
+		
 		// Instantiate a shader program and the renderer
 		ShaderProgram shaderProgram = new ShaderProgram(ShaderSource.vertexShaderSource, ShaderSource.fragmentShaderSource);
 		Renderer renderer = new Renderer(Settings.vertices);
@@ -52,7 +61,11 @@ public class AppMain {
 		changeGameState(GAME_STATE.PLAY); 
 		
 		// Instantiate player
-		Player p1 = new Player(new Vector3f(0.0f, 0.0f, 1.0f));
+		Player p1 = new Player(new Vector3f(0.0f, 1.0f, 1.0f));
+		
+		// TEST (Instantiate a block)
+		Block dirt = new Block(0.0f, 0.0f, 0.0f, 0);
+		dirt.sendVerticesToBuffer();
 
 		// Gets called when mouse moves
 		GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {
@@ -77,7 +90,7 @@ public class AppMain {
 		
 		// Program loop
 		while (!GLFW.glfwWindowShouldClose(window)) {
-			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT);
+			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
 
 			
 			// per-frame timing
@@ -86,6 +99,7 @@ public class AppMain {
 			lastFrame = currentFrame;
 			
 			gdeltaTime += deltaTime;
+			
 			
 			if (gdeltaTime >= 1.0f / Settings.FPS_LIMIT) { // Gets executed once per frame, limited by fps
 				if (currentGameState == GAME_STATE.PLAY) {
@@ -103,19 +117,19 @@ public class AppMain {
 
 				// Update all player at each frame
 				p1.updatePlayer();
-				
+
 				gdeltaTime = 0;
 			}
 			
 			shaderProgram.sendMatricesToShader(p1.getCamera(), transform);
 			shaderProgram.use();
-			renderer.Render();
+			renderer.render();
 			
 			GLFW.glfwSwapBuffers(window);
 			GLFW.glfwPollEvents();
 		}
 		
-		renderer.CleanUp();
+		renderer.cleanUp();
 		shaderProgram.delete();
 		GLFW.glfwDestroyWindow(window);
 		GLFW.glfwTerminate();

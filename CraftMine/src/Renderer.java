@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
 public class Renderer {
+	
 	private final int vaoId;
 	private final int vboId;
 	
@@ -28,12 +29,12 @@ public class Renderer {
 		GL30.glEnableVertexAttribArray(1);
 	}
 	
-	public void Render() {
+	public void render() {
 		GL30.glBindVertexArray(vaoId);
-		GL30.glDrawArrays(GL30.GL_TRIANGLES, 0, 6);
+		GL30.glDrawArrays(GL30.GL_TRIANGLES, 0, Settings.vertices.length/5);
 	}
 	
-	public void CleanUp() {
+	public void cleanUp() {
 		GL30.glDeleteVertexArrays(vaoId);
 	}
 }

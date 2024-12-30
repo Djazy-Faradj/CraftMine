@@ -1,3 +1,4 @@
+import org.joml.Vector3f;
 
 public class Settings {
 	public static final int 	WINDOW_WIDTH = 1000, 
@@ -13,19 +14,75 @@ public class Settings {
 	
 	public static final float 	FPS_LIMIT = 120.0f;
 	
-	private static int xOffset = 3, yOffset = 0; // used for debugging and choosing square texture (to be deleted)
+	private static float yOffset_text = 0.02941176f; // used for debugging and choosing square texture (to be deleted)
 	
+	private static Vector3f position = new Vector3f(0.0f, 0.0f, 0.0f);
 	
 	public static float[] vertices = {
-			// SQUARE COMPOSED OF TWO TRIANGLES
+		// // FRONT SQUARE 
 			// Positions (x, y, z) 		// Texture Coordinate
-		   -0.5f,  0.5f, 0.0f,	 		0.0f+0.041666f*xOffset, 1.0f-0.02941176f*yOffset, // Top
-		   -0.5f, -0.5f, 0.0f,			0.0f+0.041666f*xOffset, 0.97058823f-0.02941176f*yOffset, // Bottom-left
-			0.5f, -0.5f, 0.0f,			0.041666f+0.041666f*xOffset, 0.97058823f-0.02941176f*yOffset, // Bottom-right
+		   position.x-0.5f,  position.y+0.5f, position.z+0.5f,	 		0.0f, 1.0f, // Top
+		   position.x-0.5f,  position.y-0.5f, position.z+0.5f,			0.0f, 0.97058823f, // Bottom-left
+		   position.x+0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f, 0.97058823f, // Bottom-right
 			
 			// Positions 				// Texture Coordinate
-		   -0.5f,  0.5f, 0.0f, 			0.0f+0.041666f*xOffset, 1.0f-0.02941176f*yOffset, // Top
-			0.5f, -0.5f, 0.0f,			0.041666f+0.041666f*xOffset, 0.97058823f-0.02941176f*yOffset, // Bottom-left
-			0.5f,  0.5f, 0.0f,			0.041666f+0.041666f*xOffset, 1.0f-0.02941176f*yOffset // Bottom-right
+		   position.x-0.5f,  position.y+0.5f, position.z+0.5f, 			0.0f, 1.0f, // Top
+		   position.x+0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f, 0.97058823f, // Bottom-left
+		   position.x+0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f, 1.0f, // Bottom-right
+
+		// // BACK SQUARE 
+			// Positions (x, y, z) 		// Texture Coordinate
+		   position.x+0.5f,  position.y-0.5f, position.z-0.5f,	 		0.041666f, 0.97058823f-yOffset_text, // Top
+		   position.x-0.5f,  position.y-0.5f, position.z-0.5f,			0.0f, 0.97058823f-yOffset_text, // Bottom-left
+		   position.x-0.5f,  position.y+0.5f, position.z-0.5f,			0.0f, 1.0f-yOffset_text, // Bottom-right
+			
+			// Positions 				// Texture Coordinate
+		   position.x+0.5f,  position.y+0.5f, position.z-0.5f, 			0.041666f, 1.0f-yOffset_text, // Top
+		   position.x+0.5f,  position.y-0.5f, position.z-0.5f,			0.041666f, 0.97058823f-yOffset_text, // Bottom-left
+		   position.x-0.5f,  position.y+0.5f, position.z-0.5f,			0.0f, 1.0f-yOffset_text, // Bottom-right
+			
+		// RIGHT SQUARE
+			// Positions (x, y, z) 		// Texture Coordinate
+		   position.x+0.5f,  position.y-0.5f, position.z+0.5f,	 		0.041666f, 0.97058823f-yOffset_text*2, // Top
+		   position.x+0.5f,  position.y-0.5f, position.z-0.5f,			0.0f, 0.97058823f-yOffset_text*2, // Bottom-left
+		   position.x+0.5f,  position.y+0.5f, position.z-0.5f,			0.0f, 1.0f-yOffset_text*2, // Bottom-right
+		   
+			// Positions 				// Texture Coordinate
+		   position.x+0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f, 1.0f-yOffset_text*2, // Top
+		   position.x+0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f, 0.97058823f-yOffset_text*2, // Bottom-left
+		   position.x+0.5f,  position.y+0.5f, position.z-0.5f,			0.0f, 1.0f-yOffset_text*2, // Bottom-right
+
+		// LEFT SQUARE
+			// Positions (x, y, z) 		// Texture Coordinate
+		   position.x-0.5f,  position.y+0.5f, position.z-0.5f,	 		0.0f, 1.0f-yOffset_text*2, // Top
+		   position.x-0.5f,  position.y-0.5f, position.z-0.5f,			0.0f, 0.97058823f-yOffset_text*2, // Bottom-left
+		   position.x-0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f, 0.97058823f-yOffset_text*2, // Bottom-right
+			
+			// Positions 				// Texture Coordinate
+		   position.x-0.5f,  position.y+0.5f, position.z-0.5f, 			0.0f, 1.0f-yOffset_text*2, // Top
+		   position.x-0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f, 0.97058823f-yOffset_text*2, // Bottom-left
+		   position.x-0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f, 1.0f-yOffset_text*2, // Bottom-right
+
+		// TOP SQUARE
+			// Positions (x, y, z) 		// Texture Coordinate
+		    position.x+0.5f,  position.y+0.5f, position.z-0.5f,	 		0.0f, 1.0f-yOffset_text*3, // Top
+		    position.x-0.5f,  position.y+0.5f, position.z-0.5f,			0.0f, 0.97058823f-yOffset_text*3, // Bottom-left
+		    position.x-0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f, 0.97058823f-yOffset_text*3, // Bottom-right
+			
+			// Positions 				// Texture Coordinate
+		    position.x+0.5f,  position.y+0.5f, position.z-0.5f, 			0.0f, 1.0f-yOffset_text*3, // Top
+		    position.x-0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f, 0.97058823f-yOffset_text*3, // Bottom-left
+		    position.x+0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f, 1.0f-yOffset_text*3, // Bottom-right
+		    
+		// BOTTOM SQUARE
+			// Positions (x, y, z) 		// Texture Coordinate
+		    position.x-0.5f,  position.y-0.5f, position.z+0.5f,	 		0.041666f, 0.97058823f-yOffset_text*3, // Top
+		    position.x-0.5f,  position.y-0.5f, position.z-0.5f,			0.0f, 0.97058823f-yOffset_text*3, // Bottom-left
+		    position.x+0.5f,  position.y-0.5f, position.z-0.5f,			0.0f, 1.0f-yOffset_text*3, // Bottom-right
+			
+			// Positions 				// Texture Coordinate
+		    position.x+0.5f,  position.y-0.5f, position.z+0.5f, 		0.041666f, 1.0f-yOffset_text*3, // Top
+		    position.x-0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f, 0.97058823f-yOffset_text*3, // Bottom-left
+		    position.x+0.5f,  position.y-0.5f, position.z-0.5f,			0.0f, 1.0f-yOffset_text*3 // Bottom-right
 	};
 }
