@@ -65,7 +65,7 @@ public class AppMain {
 		
 		// TEST (Instantiate a block)
 		Block dirt = new Block(0.0f, 0.0f, 0.0f, 0);
-		dirt.sendVerticesToBuffer();
+		dirt.sendVerticesToBuffer(renderer);
 
 		// Gets called when mouse moves
 		GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {

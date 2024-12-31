@@ -189,7 +189,7 @@ public class Block {
 		this.vertices = vertices;
 	}
 	
-	void sendVerticesToBuffer() {
-		GL30.glBufferData(GL30.GL_ARRAY_BUFFER, vertices, GL30.GL_STATIC_DRAW);
+	void sendVerticesToBuffer(Renderer renderer) {
+		renderer.addVertices(this.vertices);
 	}
 }

@@ -25,20 +25,20 @@ public class Camera {
 	}
 	
 	public void processKeyboard(float playerVelocity) {
-	    cameraSpeed = playerVelocity * AppMain.kdeltaTime;
+	    cameraSpeed = playerVelocity;
 	}
 	
 	public void updateCamera() { // To be called every frame
 	    Vector3f horizontalFront = new Vector3f(front.x, 0.0f, front.z).normalize(); // Ignores camera pitch when moving 
 	    
 	    if (direction.z == 1.0f) 
-	    	position.add(new Vector3f(horizontalFront).mul(new Vector3f(cameraSpeed, 0.0f, cameraSpeed)));
+	    	position.add(new Vector3f(horizontalFront).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
 	    if (direction.z == -1.0f) 
-	    	position.sub(new Vector3f(horizontalFront).mul(new Vector3f(cameraSpeed, 0.0f, cameraSpeed)));
+	    	position.sub(new Vector3f(horizontalFront).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
 	    if (direction.x == 1.0f) 
-	    	position.add(new Vector3f(right).mul(new Vector3f(cameraSpeed, 0.0f, cameraSpeed)));
+	    	position.add(new Vector3f(right).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
 	    if (direction.x == -1.0f) 
-	    	position.sub(new Vector3f(right).mul(new Vector3f(cameraSpeed, 0.0f, cameraSpeed)));
+	    	position.sub(new Vector3f(right).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
 		
 	}
 
