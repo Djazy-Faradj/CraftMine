@@ -28,7 +28,7 @@ This project is a 3D game built with the **Lightweight Java Game Library (LWJGL)
 - Blocks are rendered as textured quads (two triangles forming a square).
 
 ### **Input Handling**
-- Keyboard input for WASD movement and space/shift for vertical movement.
+- Keyboard input for WASD movement.
 - Mouse input for camera rotation.
 - Efficient input handling optimized to prevent lag when moving the mouse frequently.
 
@@ -43,9 +43,6 @@ This project is a 3D game built with the **Lightweight Java Game Library (LWJGL)
 2. **Block Visibility and Occlusion**:
    - Ensuring that hidden faces of blocks are not rendered to optimize performance.
 
-3. **Depth Precision**:
-   - Maintaining high depth precision while balancing near and far planes.
-
 ---
 
 ## Next Steps
@@ -56,7 +53,6 @@ This project is a 3D game built with the **Lightweight Java Game Library (LWJGL)
    - Optimize the vertex data update process to handle large block worlds efficiently.
 
 2. **Face Culling**:
-   - Implement back-face culling to skip rendering faces that are not visible to the player.
    - Introduce block occlusion to prevent rendering of faces hidden by neighboring blocks.
 
 3. **Lighting and Shading**:
@@ -86,7 +82,7 @@ This project is a 3D game built with the **Lightweight Java Game Library (LWJGL)
    ```
 2. Open the project in your IDE.
 3. Ensure that LWJGL libraries are correctly linked in your build configuration.
-4. Run the `Main` class to start the program.
+4. Run the `AppMain` class to start the program.
 
 ---
 
@@ -105,7 +101,5 @@ If you'd like to contribute:
 ---
 
 ## Contact
-For any questions or suggestions, feel free to reach out:
-- **Email**: [your-email@example.com]
-- **GitHub**: [your-github-profile]
+For any questions or suggestions, feel free to reach out to me!
 
