@@ -6,7 +6,11 @@ import org.joml.Vector3f;
 //		2: GRASS_BLOCK
 //		3: COBBLESTONE_BLOCK
 
+
 public class Block {
+	private static int idCount = 0;
+	
+	private int id;
 	private int type;
 	private Vector3f position;
 	private float health;
@@ -16,6 +20,7 @@ public class Block {
 	private int xOffset_top, yOffset_top, xOffset_bottom, yOffset_bottom, xOffset_sides, yOffset_sides;	
 	
 	public Block (float xPos, float yPos, float zPos, int type) {
+		this.id = idCount++;
 		this.position = new Vector3f(xPos, yPos, zPos);
 		switch (type) {
 		case 0:
@@ -65,8 +70,17 @@ public class Block {
 		return this.type;
 	}
 	
+	public int getId() {
+		return this.id;
+	}
+	
 	public Vector3f getPosition() {
 		return this.position;
+	}
+	
+	// INTERFACE
+	public int isBlockAt(Vector3f position) { // Returns -1 if block is not here, else returns the block id
+		return this.position.equals(position) ? this.id : -1;
 	}
 	
 	private void Grassy_Dirt_Block() { // Type = 0

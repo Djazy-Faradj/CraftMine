@@ -1,5 +1,3 @@
-import org.joml.Vector3f;
-
 public class Settings {
 	public static final int 	WINDOW_WIDTH = 1000, 
 								WINDOW_HEIGHT = 650;

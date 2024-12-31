@@ -2,14 +2,15 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Camera {
+    public Vector3f direction = new Vector3f(0.0f, 0.0f, 0.0f);
+    
+    private Vector3f[] scannedBlockLocs = new Vector3f[1];
 	private static int cameraIdCount = 1; // Starts at Id 1
-	private float rayLength = 3.0f;
+	private float rayLength = 2.0f, rayPrecision = 0.1f; // Higher the precision, more ressource intensive is the ray
 	private int id;
 	private Vector3f position, front, up, right;
 	private float pitch, yaw;
-    public Vector3f direction = new Vector3f(0.0f, 0.0f, 0.0f);
     private float cameraSpeed;
-    private boolean t = false;
     
 	public Camera (Vector3f position) {
 		this.id = cameraIdCount++;
@@ -69,15 +70,26 @@ public class Camera {
 	}
 	
 	private void UpdateCameraRay() {
-		Vector3f rayPos = new Vector3f();
-		for (float r = 0.0f; r < rayLength; r+=0.1f) {
-			rayPos = (new Vector3f(this.front).normalize().mul(r));
-			rayPos.floor();
-			rayPos.add(new Vector3f(position));
-			if (!t)
-				System.out.println("Ray position: " + rayPos);
+		resetScannedBlockLocs();
+		for (float r = 0.0f; r < rayLength; r+=rayPrecision) {
+			Vector3f rayPos = (new Vector3f(this.position).add(new Vector3f(this.front).mul(r)).add(0.5f, 0.5f, 0.5f).floor());
+			addScannedBlockLoc(rayPos);
 		}
-		t = true;
+	}
+	
+	private void resetScannedBlockLocs() { 
+		this.scannedBlockLocs = new Vector3f[1];
+		this.scannedBlockLocs[0] = this.position;
+	}
+	
+	private void addScannedBlockLoc(Vector3f newBlockPos) {
+		for (int i = 0; i < this.scannedBlockLocs.length; i++) { 
+			if (this.scannedBlockLocs[i].equals(newBlockPos)) return;
+		}
+		Vector3f[] temp = new Vector3f[this.scannedBlockLocs.length + 1];
+		System.arraycopy(this.scannedBlockLocs, 0, temp, 0, this.scannedBlockLocs.length);
+		temp[temp.length-1] = newBlockPos;
+		this.scannedBlockLocs = temp;
 	}
 	
 	public int getId() {
@@ -90,6 +102,21 @@ public class Camera {
 	
 	public Vector3f getPosition() {
 		return this.position;
+	}
+	
+	public Vector3f[] getScannedBlockLocs() {
+		return this.scannedBlockLocs;
+	}
+	
+	public Block scanForBlock(Block[] blocksInView) {
+		for (int j = 0; j < getScannedBlockLocs().length; j++) {
+			for (int i = 0; i < blocksInView.length; i++) {
+				if (blocksInView[i].isBlockAt(getScannedBlockLocs()[j]) != -1) {
+					return blocksInView[i];
+				}
+			}
+		}
+		return null;
 	}
 	
 	public boolean equals(Camera c) {

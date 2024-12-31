@@ -62,10 +62,14 @@ public class AppMain {
 		changeGameState(GAME_STATE.PLAY); 
 		
 		// Instantiate player
-		Player p1 = new Player(new Vector3f(-2.0f, -1.0f, 0.0f));
+		Player p1 = new Player(new Vector3f(0.0f, 0.0f, 0.0f));
 		
 		// TEST (Instantiate a block)
-		Block dirt = new Block(0.0f, 0.0f, 0.0f, 0);
+		Block[] blocks = new Block[2];
+		Block dirt = new Block(0.0f, 1.0f, 0.0f, 0);
+		Block stone = new Block(1.0f, 0.0f, 0.0f, 3);
+		blocks[0] = dirt;
+		blocks[1] = stone;
 
 		// Gets called when mouse moves
 		GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {
@@ -107,6 +111,11 @@ public class AppMain {
 					p1.getCamera().processMouse(xOffset, yOffset, true);
 					xOffset = 0.0f;
 					yOffset = 0.0f;
+
+
+					// Update all player at each frame
+					if (p1.getCamera().scanForBlock(blocks) != null);
+						//System.out.println(p1.getCamera().scanForBlock(blocks).getId());
 				}
 				// Upon changing game state, change input mode of cursor
 				if (currentGameState == GAME_STATE.PLAY && GLFW.glfwGetInputMode(window, GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_NORMAL)
@@ -114,9 +123,6 @@ public class AppMain {
 				if (currentGameState == GAME_STATE.MENU && GLFW.glfwGetInputMode(window, GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_DISABLED)
 					GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
 				
-
-				// Update all player at each frame
-				p1.updatePlayer();
 
 				gdeltaTime = 0;
 			}
