@@ -1,5 +1,5 @@
 // Djazy Faradj
-// Last Updated: 2024-12-29
+// Last Updated: 2024-12-31
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL30;
@@ -15,9 +15,10 @@ public class AppMain {
 	
 	public static GAME_STATE currentGameState;
 
-	// To start game timer
+	// Game timer
 	public static float lastFrame = 0.0f, deltaTime = 0.0f, gdeltaTime = 0.0f, kdeltaTime = 0.0f;
 
+	// Used for cursor movement
 	private static float lastX = 0.0f, lastY = 0.0f, xOffset = 0.0f, yOffset = 0.0f;
 	
 	public static void main(String[] args) {
@@ -43,7 +44,7 @@ public class AppMain {
 		
 		// Instantiate a shader program and the renderer
 		ShaderProgram shaderProgram = new ShaderProgram(ShaderSource.vertexShaderSource, ShaderSource.fragmentShaderSource);
-		Renderer renderer = new Renderer(Settings.vertices);
+		Renderer renderer = new Renderer();
 		Transform transform = new Transform();
 		InputHandler inputHandler = new InputHandler();
 		
@@ -61,11 +62,10 @@ public class AppMain {
 		changeGameState(GAME_STATE.PLAY); 
 		
 		// Instantiate player
-		Player p1 = new Player(new Vector3f(0.0f, 1.0f, 1.0f));
+		Player p1 = new Player(new Vector3f(-2.0f, -1.0f, 0.0f));
 		
 		// TEST (Instantiate a block)
 		Block dirt = new Block(0.0f, 0.0f, 0.0f, 0);
-		dirt.sendVerticesToBuffer(renderer);
 
 		// Gets called when mouse moves
 		GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {

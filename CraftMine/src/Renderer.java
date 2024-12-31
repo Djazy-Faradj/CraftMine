@@ -10,7 +10,7 @@ public class Renderer {
 	
 	private static float[] vertices = {};
 	
-	public Renderer(float[] vertices) {
+	public Renderer() {
 		vaoId = GL30.glGenVertexArrays();
 		GL30.glBindVertexArray(vaoId);
 		
@@ -30,7 +30,7 @@ public class Renderer {
 	
 	public void render() {
 		GL30.glBindVertexArray(vaoId);
-		GL30.glDrawArrays(GL30.GL_TRIANGLES, 0, this.vertices.length/5);
+		GL30.glDrawArrays(GL30.GL_TRIANGLES, 0, vertices.length/5);
 	}
 	
 	public void cleanUp() {
@@ -38,22 +38,22 @@ public class Renderer {
 	}
 	
 	public void clearVertices() {
-		this.vertices = new float[0];
+		vertices = new float[0];
 	}
 	
-	public void addVertices(float[] additionalVertices) {
+	public static void addVertices(float[] additionalVertices) {
 		int ogLen = vertices.length;
 		float[] newArr = new float[ogLen + additionalVertices.length];
-		System.arraycopy(this.vertices, 0, newArr, 0, ogLen);
+		System.arraycopy(vertices, 0, newArr, 0, ogLen);
 		System.arraycopy(additionalVertices, 0, newArr, ogLen, additionalVertices.length);
-		this.vertices = newArr;
+		vertices = newArr;
 		updateBuffer();
 	}
 	
-	private void updateBuffer() {
-		FloatBuffer vertexBuffer = MemoryUtil.memAllocFloat(this.vertices.length);
-		vertexBuffer.put(this.vertices).flip();
-		GL30.glBufferData(GL30.GL_ARRAY_BUFFER, this.vertices, GL30.GL_STATIC_DRAW);
+	private static void updateBuffer() {
+		FloatBuffer vertexBuffer = MemoryUtil.memAllocFloat(vertices.length);
+		vertexBuffer.put(vertices).flip();
+		GL30.glBufferData(GL30.GL_ARRAY_BUFFER, vertices, GL30.GL_STATIC_DRAW);
 		MemoryUtil.memFree(vertexBuffer);
 		
 	}

@@ -3,11 +3,13 @@ import org.joml.Vector3f;
 
 public class Camera {
 	private static int cameraIdCount = 1; // Starts at Id 1
+	private float rayLength = 3.0f;
 	private int id;
 	private Vector3f position, front, up, right;
 	private float pitch, yaw;
     public Vector3f direction = new Vector3f(0.0f, 0.0f, 0.0f);
     private float cameraSpeed;
+    private boolean t = false;
     
 	public Camera (Vector3f position) {
 		this.id = cameraIdCount++;
@@ -39,7 +41,6 @@ public class Camera {
 	    	position.add(new Vector3f(right).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
 	    if (direction.x == -1.0f) 
 	    	position.sub(new Vector3f(right).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
-		
 	}
 
 	
@@ -55,6 +56,7 @@ public class Camera {
 			if (pitch < -89.0f) pitch = -89.0f;
 		}
 		UpdateCameraVectors();
+		UpdateCameraRay();
 	}
 	
 	private void UpdateCameraVectors() {
@@ -64,6 +66,18 @@ public class Camera {
 		front.z = (float)Math.cos((double)yaw * (double)(Math.PI / 180)) * -1 * (1- Math.abs((float)Math.cos((double)pitch * (double)(Math.PI / 180) - 90 * (Math.PI / 180)) * -1));
 		front.normalize();
         right = new Vector3f(front).cross(up, new Vector3f()).normalize();
+	}
+	
+	private void UpdateCameraRay() {
+		Vector3f rayPos = new Vector3f();
+		for (float r = 0.0f; r < rayLength; r+=0.1f) {
+			rayPos = (new Vector3f(this.front).normalize().mul(r));
+			rayPos.floor();
+			rayPos.add(new Vector3f(position));
+			if (!t)
+				System.out.println("Ray position: " + rayPos);
+		}
+		t = true;
 	}
 	
 	public int getId() {

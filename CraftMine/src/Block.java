@@ -1,5 +1,4 @@
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL30;
 
 //	BLOCK TYPES
 //		0: GRASSY_DIRT_BLOCK
@@ -35,6 +34,7 @@ public class Block {
 			Grassy_Block();
 			break;
 		}
+		sendVerticesToBuffer();
 	}
 	
 	public void damage(float value) {
@@ -189,7 +189,7 @@ public class Block {
 		this.vertices = vertices;
 	}
 	
-	void sendVerticesToBuffer(Renderer renderer) {
-		renderer.addVertices(this.vertices);
+	private void sendVerticesToBuffer() {
+		Renderer.addVertices(this.vertices);
 	}
 }
