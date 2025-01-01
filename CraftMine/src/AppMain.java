@@ -33,15 +33,6 @@ public class AppMain {
 		
 		GL.createCapabilities();
 		
-		// Depth testing to avoid drawing stuff in the background at the front
-		GL30.glEnable(GL30.GL_DEPTH_TEST);
-		GL30.glDepthFunc(GL30.GL_LESS);
-		
-		// Culling
-		GL30.glEnable(GL30.GL_CULL_FACE);
-		GL30.glCullFace(GL30.GL_BACK);
-		GL30.glFrontFace(GL30.GL_CCW);
-		
 		// Instantiate a shader program and the renderer
 		ShaderProgram shaderProgram = new ShaderProgram(ShaderSource.vertexShaderSource, ShaderSource.fragmentShaderSource);
 		Renderer renderer = new Renderer();
@@ -66,8 +57,8 @@ public class AppMain {
 		
 		// TEST (Instantiate a block)
 		Block[] blocks = new Block[2];
-		Block dirt = new Block(0.0f, 1.0f, 0.0f, 0);
-		Block stone = new Block(1.0f, 0.0f, 0.0f, 3);
+		Block dirt = new Block(new Vector3f(3.0f, 0.0f, 0.0f), 0);
+		Block stone = new Block(new Vector3f(1.0f, 0.0f, 0.0f), 3);
 		blocks[0] = dirt;
 		blocks[1] = stone;
 
@@ -92,6 +83,8 @@ public class AppMain {
 		
 		float lastFrame = (float) GLFW.glfwGetTime();
 		
+		Block lastHighlightedBlock = null;
+		
 		// Program loop
 		while (!GLFW.glfwWindowShouldClose(window)) {
 			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
@@ -114,8 +107,28 @@ public class AppMain {
 
 
 					// Update all player at each frame
-					if (p1.getCamera().scanForBlock(blocks) != null);
-						//System.out.println(p1.getCamera().scanForBlock(blocks).getId());
+					p1.updatePlayer();
+					Block currentHighlightedBlock = p1.getCamera().scanForBlock(blocks);
+					
+					if (currentHighlightedBlock != null) {
+						if(currentHighlightedBlock != lastHighlightedBlock ) {
+							if (lastHighlightedBlock != null)
+								lastHighlightedBlock.isHighlighted = false;
+							if (Block.highlightBlock != null)
+								Block.highlightBlock.destroy();
+							currentHighlightedBlock.highlightBlock();
+							lastHighlightedBlock = currentHighlightedBlock;
+						}
+					}
+					else {	
+						if(lastHighlightedBlock != null)
+							lastHighlightedBlock.isHighlighted = false;
+						lastHighlightedBlock = null;
+						if (Block.highlightBlock != null) {
+							Block.highlightBlock.destroy();
+							Block.highlightBlock = null;
+						}
+					}
 				}
 				// Upon changing game state, change input mode of cursor
 				if (currentGameState == GAME_STATE.PLAY && GLFW.glfwGetInputMode(window, GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_NORMAL)

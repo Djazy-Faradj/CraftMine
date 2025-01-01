@@ -9,20 +9,28 @@ import org.joml.Vector3f;
 
 public class Block {
 	private static int idCount = 0;
+	public static Block highlightBlock;
 	
 	private int id;
 	private int type;
+	private float sizeFactor = 1.0f;
 	private Vector3f position;
 	private float health;
 	
-	private static float xOffset_value = 0.041666f, yOffset_value = 0.02941176f; // will need to calculate it automatically later
+	public boolean isHighlighted = false;
+	
+	private static float xOffset_value = 0.0416666666666667f, yOffset_value = 0.0294117647058824f; // will need to calculate it automatically later
 	private float[] vertices;
 	private int xOffset_top, yOffset_top, xOffset_bottom, yOffset_bottom, xOffset_sides, yOffset_sides;	
 	
-	public Block (float xPos, float yPos, float zPos, int type) {
+	public Block (Vector3f position, int type) {
 		this.id = idCount++;
-		this.position = new Vector3f(xPos, yPos, zPos);
+		this.position = new Vector3f(position);
 		switch (type) {
+		case -1: 
+			this.sizeFactor = 1.001f;
+			Wireframe_Block();
+			break;
 		case 0:
 			Grassy_Dirt_Block();
 			break;
@@ -55,10 +63,11 @@ public class Block {
 		this.type = type;
 	}
 	
-	public void setPosition(float x, float y, float z) {
-		this.position.x = x;
-		this.position.y = y;
-		this.position.z = z;
+	public void setPosition(Vector3f newPos) {
+		Renderer.deleteBlockVertices(this.vertices);
+		this.position = newPos;
+		generateVertices();
+		Renderer.addVertices(this.vertices);
 	}
 	
 	// ACCESSORS
@@ -80,8 +89,18 @@ public class Block {
 	
 	// INTERFACE
 	public int isBlockAt(Vector3f position) { // Returns -1 if block is not here, else returns the block id
-		return this.position.equals(position) ? this.id : -1;
+		return this.position.equals(position) && this.type != -1 ? this.id : -1; // If type = -1, its highlight block, if id = -1, its no block
 	}
+	private void Wireframe_Block() { // Type = 0
+		// Maps to the appropriate texture
+		this.xOffset_top = 19;
+		this.yOffset_top = 33;
+		this.xOffset_bottom = 19;
+		this.yOffset_bottom = 33;
+		this.xOffset_sides = 19;
+		this.yOffset_sides = 33;
+		generateVertices();
+	}	
 	
 	private void Grassy_Dirt_Block() { // Type = 0
 		// Maps to the appropriate texture
@@ -136,71 +155,90 @@ public class Block {
 		float[] vertices = {
 				// // FRONT SQUARE 
 					// Positions (x, y, z) 		// Texture Coordinate
-				   position.x-0.5f,  position.y+0.5f, position.z+0.5f,	 		0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
-				   position.x-0.5f,  position.y-0.5f, position.z+0.5f,			0.0f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
-				   position.x+0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-right
+				   position.x-0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z+0.5f*sizeFactor,	 		0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
+				   position.x-0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
+				   position.x+0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-right
 					
 					// Positions 				// Texture Coordinate
-				   position.x-0.5f,  position.y+0.5f, position.z+0.5f, 			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
-				   position.x+0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
-				   position.x+0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
+				   position.x-0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z+0.5f*sizeFactor, 			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
+				   position.x+0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
+				   position.x+0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
 
 				// // BACK SQUARE 
 					// Positions (x, y, z) 		// Texture Coordinate
-				   position.x+0.5f,  position.y-0.5f, position.z-0.5f,	 		0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Top
-				   position.x-0.5f,  position.y-0.5f, position.z-0.5f,			0.0f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
-				   position.x-0.5f,  position.y+0.5f, position.z-0.5f,			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
+				   position.x+0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z-0.5f*sizeFactor,	 		0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Top
+				   position.x-0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
+				   position.x-0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
 					
 					// Positions 				// Texture Coordinate
-				   position.x+0.5f,  position.y+0.5f, position.z-0.5f, 			0.041666f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
-				   position.x+0.5f,  position.y-0.5f, position.z-0.5f,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
-				   position.x-0.5f,  position.y+0.5f, position.z-0.5f,			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
+				   position.x+0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z-0.5f*sizeFactor, 			0.041666f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
+				   position.x+0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
+				   position.x-0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
 					
 				// RIGHT SQUARE
 					// Positions (x, y, z) 		// Texture Coordinate
-				   position.x+0.5f,  position.y-0.5f, position.z+0.5f,	 		0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Top
-				   position.x+0.5f,  position.y-0.5f, position.z-0.5f,			0.0f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
-				   position.x+0.5f,  position.y+0.5f, position.z-0.5f,			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
+				   position.x+0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z+0.5f*sizeFactor,	 		0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Top
+				   position.x+0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
+				   position.x+0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
 				   
 					// Positions 				// Texture Coordinate
-				   position.x+0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
-				   position.x+0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
-				   position.x+0.5f,  position.y+0.5f, position.z-0.5f,			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
+				   position.x+0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
+				   position.x+0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
+				   position.x+0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
 
 				// LEFT SQUARE
 					// Positions (x, y, z) 		// Texture Coordinate
-				   position.x-0.5f,  position.y+0.5f, position.z-0.5f,	 		0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
-				   position.x-0.5f,  position.y-0.5f, position.z-0.5f,			0.0f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
-				   position.x-0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-right
+				   position.x-0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z-0.5f*sizeFactor,	 		0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
+				   position.x-0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
+				   position.x-0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-right
 					
 					// Positions 				// Texture Coordinate
-				   position.x-0.5f,  position.y+0.5f, position.z-0.5f, 			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
-				   position.x-0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
-				   position.x-0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
+				   position.x-0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z-0.5f*sizeFactor, 			0.0f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Top
+				   position.x-0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_sides, 0.97058823f-yOffset_value*yOffset_sides, // Bottom-left
+				   position.x-0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_sides, 1.0f-yOffset_value*yOffset_sides, // Bottom-right
 
 				// TOP SQUARE
 					// Positions (x, y, z) 		// Texture Coordinate
-				    position.x+0.5f,  position.y+0.5f, position.z-0.5f,	 		0.0f+xOffset_value*xOffset_top, 1.0f-yOffset_value*yOffset_top, // Top
-				    position.x-0.5f,  position.y+0.5f, position.z-0.5f,			0.0f+xOffset_value*xOffset_top, 0.97058823f-yOffset_value*yOffset_top, // Bottom-left
-				    position.x-0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_top, 0.97058823f-yOffset_value*yOffset_top, // Bottom-right
+				    position.x+0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z-0.5f*sizeFactor,	 		0.0f+xOffset_value*xOffset_top, 1.0f-yOffset_value*yOffset_top, // Top
+				    position.x-0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_top, 0.97058823f-yOffset_value*yOffset_top, // Bottom-left
+				    position.x-0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_top, 0.97058823f-yOffset_value*yOffset_top, // Bottom-right
 					
 					// Positions 				// Texture Coordinate
-				    position.x+0.5f,  position.y+0.5f, position.z-0.5f, 			0.0f+xOffset_value*xOffset_top, 1.0f-yOffset_value*yOffset_top, // Top
-				    position.x-0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_top, 0.97058823f-yOffset_value*yOffset_top, // Bottom-left
-				    position.x+0.5f,  position.y+0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_top, 1.0f-yOffset_value*yOffset_top, // Bottom-right
+				    position.x+0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z-0.5f*sizeFactor, 			0.0f+xOffset_value*xOffset_top, 1.0f-yOffset_value*yOffset_top, // Top
+				    position.x-0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_top, 0.97058823f-yOffset_value*yOffset_top, // Bottom-left
+				    position.x+0.5f*sizeFactor,  position.y+0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_top, 1.0f-yOffset_value*yOffset_top, // Bottom-right
 				    
 				// BOTTOM SQUARE
 					// Positions (x, y, z) 		// Texture Coordinate
-				    position.x-0.5f,  position.y-0.5f, position.z+0.5f,	 		0.041666f+xOffset_value*xOffset_bottom, 0.97058823f-yOffset_value*yOffset_bottom, // Top
-				    position.x-0.5f,  position.y-0.5f, position.z-0.5f,			0.0f+xOffset_value*xOffset_bottom, 0.97058823f-yOffset_value*yOffset_bottom, // Bottom-left
-				    position.x+0.5f,  position.y-0.5f, position.z-0.5f,			0.0f+xOffset_value*xOffset_bottom, 1.0f-yOffset_value*yOffset_bottom, // Bottom-right
+				    position.x-0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z+0.5f*sizeFactor,	 		0.041666f+xOffset_value*xOffset_bottom, 0.97058823f-yOffset_value*yOffset_bottom, // Top
+				    position.x-0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_bottom, 0.97058823f-yOffset_value*yOffset_bottom, // Bottom-left
+				    position.x+0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_bottom, 1.0f-yOffset_value*yOffset_bottom, // Bottom-right
 					
 					// Positions 				// Texture Coordinate
-				    position.x+0.5f,  position.y-0.5f, position.z+0.5f, 		0.041666f+xOffset_value*xOffset_bottom, 1.0f-yOffset_value*yOffset_bottom, // Top
-				    position.x-0.5f,  position.y-0.5f, position.z+0.5f,			0.041666f+xOffset_value*xOffset_bottom, 0.97058823f-yOffset_value*yOffset_bottom, // Bottom-left
-				    position.x+0.5f,  position.y-0.5f, position.z-0.5f,			0.0f+xOffset_value*xOffset_bottom, 1.0f-yOffset_value*yOffset_bottom // Bottom-right
+				    position.x+0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z+0.5f*sizeFactor, 		0.041666f+xOffset_value*xOffset_bottom, 1.0f-yOffset_value*yOffset_bottom, // Top
+				    position.x-0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z+0.5f*sizeFactor,			0.041666f+xOffset_value*xOffset_bottom, 0.97058823f-yOffset_value*yOffset_bottom, // Bottom-left
+				    position.x+0.5f*sizeFactor,  position.y-0.5f*sizeFactor, position.z-0.5f*sizeFactor,			0.0f+xOffset_value*xOffset_bottom, 1.0f-yOffset_value*yOffset_bottom // Bottom-right
 			};
 		this.vertices = vertices;
+	}
+	
+	public float[] getVertices () {
+		return this.vertices;
+	}
+	
+	public boolean destroy() {
+		return (Renderer.deleteBlockVertices(this.vertices));
+	}
+	
+	public void highlightBlock() {
+		if (!isHighlighted) {
+			if (highlightBlock == null) {
+				highlightBlock = new Block(this.position, -1);
+			}
+			else
+				highlightBlock.setPosition(this.position);
+		}
+		isHighlighted = true;
 	}
 	
 	private void sendVerticesToBuffer() {
