@@ -21,7 +21,7 @@ public class Player {
 		this.id = playerIdCount++;
 		this.position = position;
 		this.playerCam = new Camera(position.add(0.0f, size.y-0.2f, 0.0f)); // Offset camera from player a little bit under the top of body
-		this.changePlayerState(PLAYER_STATE.WALKING);
+		this.changePlayerState(PLAYER_STATE.RUNNING);
 	}
 	
 	public void changePlayerState(PLAYER_STATE newState) { // Change various settings depending on new given player state

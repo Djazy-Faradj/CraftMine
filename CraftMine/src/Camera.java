@@ -6,7 +6,7 @@ public class Camera {
     
     private Vector3f[] scannedBlockLocs = new Vector3f[1];
 	private static int cameraIdCount = 1; // Starts at Id 1
-	private float rayLength = 2.0f, rayPrecision = 0.1f; // Higher the precision, more ressource intensive is the ray
+	private float rayLength = 3.0f, rayPrecision = 0.1f; // Higher the precision, more ressource intensive is the ray
 	private int id;
 	private Vector3f position, front, up, right;
 	private float pitch, yaw;

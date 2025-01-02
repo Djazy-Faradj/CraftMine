@@ -1,5 +1,5 @@
 // Djazy Faradj
-// Last Updated: 2024-12-31
+// Last Updated: 2025-01-02
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL30;
@@ -55,13 +55,24 @@ public class AppMain {
 		// Instantiate player
 		Player p1 = new Player(new Vector3f(0.0f, 0.0f, 0.0f));
 		
-		// TEST (Instantiate a block)
-		Block[] blocks = new Block[2];
-		Block dirt = new Block(new Vector3f(3.0f, 0.0f, 0.0f), 0);
-		Block stone = new Block(new Vector3f(1.0f, 0.0f, 0.0f), 3);
-		blocks[0] = dirt;
-		blocks[1] = stone;
-
+		// TEST (Instantiate a block) ***********
+		Block[] blocks = new Block[256];
+		int k = 0;
+		for (float i = -8.0f; i < 8.0f; i++) {
+			for(float j = -8.0f; j < 8.0f; j++) {
+				for(float l = -1.0f; l < 0.0f; l++, k++) {
+				Block b = new Block(new Vector3f(i, l, j), 0);
+				//System.out.println(k);
+				blocks[k] = b;
+				}
+			}
+			//System.out.println(k);
+		}
+		
+		DynamicHitbox dhb = new DynamicHitbox(new Vector3f(4.0f, 4.0f, 4.0f));
+		dhb.destroy();
+		// **************************************
+		
 		// Gets called when mouse moves
 		GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {
 			xOffset += (float) xpos - lastX ;
