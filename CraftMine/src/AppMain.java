@@ -54,6 +54,7 @@ public class AppMain {
 		
 		// Instantiate player
 		Player p1 = new Player(new Vector3f(0.0f, 0.0f, 0.0f));
+		Player activePlayer = p1;
 		
 		// TEST (Instantiate a block) ***********
 		Block[] blocks = new Block[256];
@@ -68,6 +69,11 @@ public class AppMain {
 			}
 			//System.out.println(k);
 		}
+		
+		DynamicHitbox dhb0 = new DynamicHitbox(new Vector3f(0.0f, 0.0f, 0.0f));
+		DynamicHitbox dhb1 = new DynamicHitbox(new Vector3f(20.0f, 20.0f, 20.0f));
+		StaticHitbox shb0 = new StaticHitbox(new Vector3f(8.0f, 0.0f, 0.0f));
+		StaticHitbox shb1 = new StaticHitbox(new Vector3f(2.0f, 0.0f, 0.0f));
 		// **************************************
 		
 		// Gets called when mouse moves
@@ -86,11 +92,11 @@ public class AppMain {
 
 		// Gets called when key is pressed
 		GLFW.glfwSetKeyCallback(window, (win, key, scancode, action, mods) -> {
-			inputHandler.call(key, action, scancode, p1);
+			inputHandler.call(key, action, scancode, activePlayer);
 		});
 		
-		float lastFrame = (float) GLFW.glfwGetTime();
 		
+		float lastFrame = (float) GLFW.glfwGetTime();
 		Block lastHighlightedBlock = null;
 		
 		// Program loop
@@ -109,15 +115,18 @@ public class AppMain {
 			if (gdeltaTime >= 1.0f / Settings.FPS_LIMIT) { // Gets executed once per frame, limited by fps
 				if (currentGameState == GAME_STATE.PLAY) {
 					kdeltaTime = gdeltaTime;
-					p1.getCamera().processMouse(xOffset, yOffset, true);
+					activePlayer.getCamera().processMouse(xOffset, yOffset, true);
 					xOffset = 0.0f;
 					yOffset = 0.0f;
 
 
-					// Update all player at each frame
-					p1.updatePlayer();
-					Block currentHighlightedBlock = p1.getCamera().scanForBlock(blocks);
+					// Update game each ticks (1/120th second)
+					Player.update();
+					StaticHitbox.checkForCollisions();
 					
+					
+					// HORRIBLE PIECE OF CODE BUT WORKS-- WILL MAYBE MAKE IT BETTER ONE DAY (used for block highlighting)
+					Block currentHighlightedBlock = activePlayer.getCamera().scanForBlock(blocks);
 					if (currentHighlightedBlock != null) {
 						if(currentHighlightedBlock != lastHighlightedBlock ) {
 							if (lastHighlightedBlock != null)
@@ -137,6 +146,7 @@ public class AppMain {
 							Block.highlightBlock = null;
 						}
 					}
+					// -------------------------------------------------------------------------------------------------------
 				}
 				// Upon changing game state, change input mode of cursor
 				if (currentGameState == GAME_STATE.PLAY && GLFW.glfwGetInputMode(window, GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_NORMAL)
@@ -148,7 +158,7 @@ public class AppMain {
 				gdeltaTime = 0;
 			}
 			
-			shaderProgram.sendMatricesToShader(p1.getCamera(), transform);
+			shaderProgram.sendMatricesToShader(activePlayer.getCamera(), transform);
 			shaderProgram.use();
 			renderer.render();
 			

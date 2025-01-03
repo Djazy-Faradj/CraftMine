@@ -2,13 +2,16 @@ import org.joml.Vector3f;
 
 public class DynamicHitbox {
 	
+	private static int idCount = 0;
 	public static DynamicHitbox[] instancedDynamicHitboxes = {};
 	
 	
 	private Vector3f position;
+	private int id;
 	private Vector3f[] zoneBorders;
 	
 	public DynamicHitbox(Vector3f position) {
+		this.id = idCount++;
 		this.position = position;
 		addInstanceToArray();
 		generateDetectionZone();
@@ -55,6 +58,10 @@ public class DynamicHitbox {
 	
 	public Vector3f[] getZoneBorders() {
 		return this.zoneBorders;
+	}
+	
+	public int getId() {
+		return this.id;
 	}
 	
 }

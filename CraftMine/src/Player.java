@@ -1,6 +1,9 @@
 import org.joml.Vector3f;
 
 public class Player {
+
+	public static Player[] instancedPlayers = {};
+	
 	public static enum PLAYER_STATE {
 		WALKING,
 		RUNNING,
@@ -22,6 +25,29 @@ public class Player {
 		this.position = position;
 		this.playerCam = new Camera(position.add(0.0f, size.y-0.2f, 0.0f)); // Offset camera from player a little bit under the top of body
 		this.changePlayerState(PLAYER_STATE.RUNNING);
+		
+		addInstanceToArray();
+	}
+	
+	private void addInstanceToArray() {
+		Player[] temp = new Player[instancedPlayers.length+1];
+		System.arraycopy(instancedPlayers, 0, temp, 0, instancedPlayers.length);
+		temp[instancedPlayers.length] = this;
+		
+		instancedPlayers = temp;
+	}
+	
+	public void destroy() {
+		for (int i = 0; i < instancedPlayers.length; i++) {
+			if (instancedPlayers[i] == this) {
+				Player[] temp = new Player[instancedPlayers.length-1];
+				System.arraycopy(instancedPlayers, 0, temp, 0, i);
+				System.arraycopy(instancedPlayers, i+1, temp, i, temp.length-i);
+				
+				instancedPlayers = temp;
+				return;
+			}
+		}
 	}
 	
 	public void changePlayerState(PLAYER_STATE newState) { // Change various settings depending on new given player state
@@ -41,9 +67,13 @@ public class Player {
 	}
 	
 	// The way it works is that the player mostly just follows the camera which is what is being controlled by the player
-	public void updatePlayer() {
-		this.playerCam.updateCamera();
-		this.position = new Vector3f(playerCam.getPosition()).sub(0.0f, size.y-0.2f, 0.0f);
+	public static void update() {
+		for (int i = 0; i < instancedPlayers.length; i++) {
+			Player p = instancedPlayers[i];
+			
+			p.playerCam.updateCamera();
+			p.position = new Vector3f(p.getCamera().getPosition()).sub(0.0f, p.size.y-0.2f, 0.0f);	
+		}
 	}
 	
 	// MUTATORS
