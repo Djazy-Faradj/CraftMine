@@ -1,5 +1,5 @@
 // Djazy Faradj
-// Last Updated: 2025-01-02
+// Last Updated: 2025-01-03
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL30;
@@ -69,8 +69,7 @@ public class AppMain {
 			//System.out.println(k);
 		}
 		
-		DynamicHitbox dhb = new DynamicHitbox(new Vector3f(4.0f, 4.0f, 4.0f));
-		dhb.destroy();
+		DynamicHitbox dhb = new DynamicHitbox(new Vector3f(0.5f, 0.0f, 0.0f));
 		// **************************************
 		
 		// Gets called when mouse moves

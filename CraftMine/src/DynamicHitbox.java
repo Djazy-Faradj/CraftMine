@@ -3,6 +3,7 @@ import org.joml.Vector3f;
 public class DynamicHitbox {
 	
 	public static Vector3f[] dynamicHBLocs = {};
+	public static DynamicHitbox[] instancedDynamicHitboxes = {};
 	
 	
 	private Vector3f position;
@@ -27,15 +28,27 @@ public class DynamicHitbox {
 	}
 	
 	private void updateReleventLocs() { // Determines which position is relevant for checking static hitbox collision
+		int detectionZoneRadius = Settings.HB_DETECTION_RAY_RADIUS;
+		int detectionZoneDiameter = Settings.HB_DETECTION_RAY_RADIUS*2+1;
+		int detectionZoneVolume = detectionZoneDiameter*detectionZoneDiameter*detectionZoneDiameter;
+		
+		// Clear current relevant locs to generate new ones
+		StaticHitbox.relevantStaticHBZone = new Vector3f[0];
+		
+		// Regenerate relevant locations
 		for (int m = 0; m < dynamicHBLocs.length; m++) {
-			Vector3f[] relevantLocs = new Vector3f[27];
-			for (int i = -1, p = 0; i <= 1; i++) {
-				for (int j = -1; j <= 1; j++) {
-					for (int k = -1; k <= 1; k++, p++) {
+			Vector3f[] relevantLocs = new Vector3f[detectionZoneVolume];
+			for (int i = -detectionZoneRadius, p = 0; i <= detectionZoneRadius; i++) {
+				for (int j = -detectionZoneRadius; j <= detectionZoneRadius; j++) {
+					for (int k = -detectionZoneRadius; k <= detectionZoneRadius; k++, p++) {
 						relevantLocs[p] = new Vector3f(dynamicHBLocs[m]).add(new Vector3f(i, j, k));
 					}
 				}
 			}
+			StaticHitbox.addLocsToArray(relevantLocs);
+		}
+		for (int i = 0; i < StaticHitbox.relevantStaticHBZone.length; i++) {
+			System.out.println(StaticHitbox.relevantStaticHBZone[i]);
 		}
 	}
 	
