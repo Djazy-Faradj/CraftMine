@@ -12,6 +12,6 @@ public class Settings {
 	
 	public static final float 	FPS_LIMIT = 120.0f;
 	
-	public static final int HB_DETECTION_RAY_RADIUS = 1;
+	public static final float HB_DETECTION_RAY_RADIUS = 2.0f;
 	
 }

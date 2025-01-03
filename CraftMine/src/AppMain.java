@@ -68,8 +68,6 @@ public class AppMain {
 			}
 			//System.out.println(k);
 		}
-		
-		DynamicHitbox dhb = new DynamicHitbox(new Vector3f(0.5f, 0.0f, 0.0f));
 		// **************************************
 		
 		// Gets called when mouse moves
