@@ -27,6 +27,7 @@ public class Camera {
 		return new Matrix4f().lookAt(position, center, up);
 	}
 	
+	
 	public void processKeyboard(float playerVelocity) {
 	    cameraSpeed = playerVelocity;
 	}
@@ -42,8 +43,12 @@ public class Camera {
 	    	position.add(new Vector3f(right).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
 	    if (direction.x == -1.0f) 
 	    	position.sub(new Vector3f(right).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
+	 
 	}
 
+	public void displace(Vector3f d) { // Used for displacing when colliding against objects
+		position.add(d);
+	}
 	
 	public void processMouse(float xOffset, float yOffset, boolean constraintPitch) {
 		if (xOffset > -90 && xOffset < 90 && yOffset > -90 && yOffset < 90) { // This condition prevents camera from "snapping" every time game pauses and resumes

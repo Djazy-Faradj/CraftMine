@@ -18,12 +18,15 @@ public class Player {
 	private float velocity = Settings.PLAYER_VELOCITY;
 	private Vector3f size = new Vector3f(0.5f, 1.4f, 0.5f);
 	private Vector3f position;
-	public Camera playerCam;
+	private Camera playerCam;
+	private DynamicHitbox playerHitbox;
+	
 	
 	Player(Vector3f position) {
 		this.id = playerIdCount++;
 		this.position = position;
 		this.playerCam = new Camera(position.add(0.0f, size.y-0.2f, 0.0f)); // Offset camera from player a little bit under the top of body
+		this.playerHitbox = new DynamicHitbox(position, 0.3f, 0.3f, 1.6f); // Generate hitbox for player
 		this.changePlayerState(PLAYER_STATE.RUNNING);
 		
 		addInstanceToArray();
@@ -38,6 +41,8 @@ public class Player {
 	}
 	
 	public void destroy() {
+		
+		playerHitbox.destroy();
 		for (int i = 0; i < instancedPlayers.length; i++) {
 			if (instancedPlayers[i] == this) {
 				Player[] temp = new Player[instancedPlayers.length-1];
@@ -72,7 +77,9 @@ public class Player {
 			Player p = instancedPlayers[i];
 			
 			p.playerCam.updateCamera();
+			p.playerCam.displace(p.playerHitbox.getDisplacement());
 			p.position = new Vector3f(p.getCamera().getPosition()).sub(0.0f, p.size.y-0.2f, 0.0f);	
+			p.playerHitbox.setPosition(p.position);
 		}
 	}
 	

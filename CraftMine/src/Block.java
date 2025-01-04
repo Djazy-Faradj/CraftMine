@@ -16,6 +16,8 @@ public class Block {
 	private float sizeFactor = 1.0f;
 	private Vector3f position;
 	private float health;
+	private boolean collisionEnabled = false;
+	private StaticHitbox shb = new StaticHitbox(new Vector3f(), 0.0f, 0.0f, 0.0f);
 	
 	public boolean isHighlighted = false;
 	
@@ -47,6 +49,8 @@ public class Block {
 			Grassy_Block();
 			break;
 		}
+		if (this.collisionEnabled)
+			this.shb = new StaticHitbox(new Vector3f(position.x, position.y-0.5f*sizeFactor, position.z), 0.5f*sizeFactor, 0.5f*sizeFactor, sizeFactor);
 		sendVerticesToBuffer();
 	}
 	
@@ -91,7 +95,7 @@ public class Block {
 	public int isBlockAt(Vector3f position) { // Returns -1 if block is not here, else returns the block id
 		return this.position.equals(position) && this.type != -1 ? this.id : -1; // If type = -1, its highlight block, if id = -1, its no block
 	}
-	private void Wireframe_Block() { // Type = 0
+	private void Wireframe_Block() { // Type = -1
 		// Maps to the appropriate texture
 		this.xOffset_top = 19;
 		this.yOffset_top = 33;
@@ -99,6 +103,7 @@ public class Block {
 		this.yOffset_bottom = 33;
 		this.xOffset_sides = 19;
 		this.yOffset_sides = 33;
+		shb.destroy();
 		generateVertices();
 	}	
 	
@@ -110,6 +115,7 @@ public class Block {
 		this.yOffset_bottom = 0;
 		this.xOffset_sides = 3;
 		this.yOffset_sides = 0;
+		this.collisionEnabled = true;
 		generateVertices();
 		
 		this.health = 10.0f;
@@ -122,6 +128,7 @@ public class Block {
 		this.yOffset_bottom = 0;
 		this.xOffset_sides = 2;
 		this.yOffset_sides = 0;
+		this.collisionEnabled = true;
 		generateVertices();
 		
 		this.health = 10.0f;
@@ -134,6 +141,7 @@ public class Block {
 		this.yOffset_bottom = 0;
 		this.xOffset_sides = 0;
 		this.yOffset_sides = 0;
+		this.collisionEnabled = true;
 		generateVertices();
 		
 		this.health = 10.0f;
@@ -146,6 +154,7 @@ public class Block {
 		this.yOffset_bottom = 1;
 		this.xOffset_sides = 0;
 		this.yOffset_sides = 1;
+		this.collisionEnabled = true;
 		generateVertices();
 		
 		this.health = 30.0f;
@@ -227,6 +236,7 @@ public class Block {
 	}
 	
 	public boolean destroy() {
+		shb.destroy();
 		return (Renderer.deleteBlockVertices(this.vertices));
 	}
 	

@@ -4,17 +4,23 @@ public class DynamicHitbox {
 	
 	private static int idCount = 0;
 	public static DynamicHitbox[] instancedDynamicHitboxes = {};
-	
-	
-	private Vector3f position;
-	private int id;
-	private Vector3f[] zoneBorders;
-	
-	public DynamicHitbox(Vector3f position) {
+	private Vector3f displacement = new Vector3f(); // Displacement required for the attached entity to correct collision offset
+																				// RADIALLY FOR X AND Z				// FROM ORIGIN FOR Y
+																			  // z							  // y
+																				//----------------------//		//----------------------//
+	private Vector3f position;													//		| zSize			//		//			|	height 	//
+	private int id;																//		|				//		//			|			//
+	private float height;														//	----D---- xSize		//		//			|			//
+	private float xSize; // Radius of dynamic hitbox (for player specifically)	//		|				//		//			|			//
+	private float zSize;														//		|				//		//		----D---- xSize	//
+																				//----------------------// x	//----------------------// x
+	public DynamicHitbox(Vector3f position, float xSize, float zSize, float height) {
 		this.id = idCount++;
 		this.position = position;
+		this.height = height;
+		this.xSize = xSize;
+		this.zSize = zSize;
 		addInstanceToArray();
-		generateDetectionZone();
 
 	}
 	
@@ -38,26 +44,33 @@ public class DynamicHitbox {
 			}
 		}
 	}
-	
-	public void update() {
-		generateDetectionZone();
+
+	public void setPosition(Vector3f position) {
+		this.position = position;
 	}
 	
-	private void generateDetectionZone() { // Generate a zone around the dynamic hitbox for which static hitboxes will check for collision
-		float zoneRadius = Settings.HB_DETECTION_RAY_RADIUS;
-		
-		this.zoneBorders = new Vector3f[8];
-		for (int i = -1, m = 0; i <= 1; i+=2) {
-			for (int j = -1; j <= 1; j+=2) {
-				for (int k = -1; k <= 1; k+=2, m++) {
-					zoneBorders[m] = new Vector3f(this.position.x + zoneRadius*i, this.position.y + zoneRadius*j, this.position.z + zoneRadius*k);
-				}
-			}
-		}
+	public Vector3f getPosition() {
+		return this.position;
 	}
 	
-	public Vector3f[] getZoneBorders() {
-		return this.zoneBorders;
+	public float getHeight() {
+		return this.height;
+	}
+	
+	public float getSizeX() {
+		return this.xSize;
+	}
+	
+	public float getSizeZ() {
+		return this.zSize;
+	}
+	
+	public void setDisplacement(Vector3f d) {
+		this.displacement = new Vector3f(d);
+	}
+	
+	public Vector3f getDisplacement() {
+		return this.displacement;
 	}
 	
 	public int getId() {

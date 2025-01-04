@@ -1,5 +1,5 @@
 // Djazy Faradj
-// Last Updated: 2025-01-03
+// Last Updated: 2025-01-04
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL30;
@@ -70,10 +70,12 @@ public class AppMain {
 			//System.out.println(k);
 		}
 		
-		DynamicHitbox dhb0 = new DynamicHitbox(new Vector3f(0.0f, 0.0f, 0.0f));
-		DynamicHitbox dhb1 = new DynamicHitbox(new Vector3f(20.0f, 20.0f, 20.0f));
-		StaticHitbox shb0 = new StaticHitbox(new Vector3f(8.0f, 0.0f, 0.0f));
-		StaticHitbox shb1 = new StaticHitbox(new Vector3f(2.0f, 0.0f, 0.0f));
+		Block c = new Block(new Vector3f(12.0f, 1.0f, 21.0f), 3);
+		
+		//DynamicHitbox dhb0 = new DynamicHitbox(new Vector3f(1.1f, 2.1f, 2.0f), 1.0f, 1.0f, 1.0f);
+		//DynamicHitbox dhb1 = new DynamicHitbox(new Vector3f(10.0f, 100.0f, 10.0f));
+		//StaticHitbox shb0 = new StaticHitbox(new Vector3f(1.0f, 0.0f, 1.0f), 1.0f, 1.0f, 1.0f);
+		//StaticHitbox shb1 = new StaticHitbox(new Vector3f(1.9f, 0.0f, 0.0f));
 		// **************************************
 		
 		// Gets called when mouse moves

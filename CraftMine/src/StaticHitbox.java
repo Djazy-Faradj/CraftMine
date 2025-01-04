@@ -7,10 +7,14 @@ public class StaticHitbox {
 	private Vector3f position;
 	private int id;
 	public static StaticHitbox[] instancedStaticHitboxes = {};
+	private float xSize, zSize, height;
 	
-	public StaticHitbox(Vector3f position) {
+	public StaticHitbox(Vector3f position, float xSize, float zSize, float height) {
 		this.id = idCount++;
 		this.position = position;
+		this.xSize = xSize;
+		this.zSize = zSize;
+		this.height = height;
 		addInstanceToArray();
 	}		
 	
@@ -45,20 +49,35 @@ public class StaticHitbox {
 			
 			for (int i = 0; i < DynamicHitbox.instancedDynamicHitboxes.length; i++) {
 				DynamicHitbox dhb = DynamicHitbox.instancedDynamicHitboxes[i];
-				Vector3f[] zoneBorders = dhb.getZoneBorders();
-				
-				dhb.update();	// First, update all dynamic hitboxes to have relevant zones to check for collisions
-				
-				// Now, check if shb is in zone and if so, check for collision
-				for (int j = 0; j < zoneBorders.length; j++) {
-					if ((zoneBorders[j].x - shb.position.x)*zoneBorders[j].x < 0.0f || (zoneBorders[j].y - shb.position.y)*zoneBorders[j].y < 0.0f || (zoneBorders[j].z - shb.position.z)*zoneBorders[j].z < 0.0f) {
-						System.out.println("shb " + shb.getId() + " is not relevant to dhb " + dhb.getId());
-						break; // Static hitbox is NOT relevant zone of this dhb
-					}
-					if (j == zoneBorders.length-1) {
-						// THIS IS WHERE YOU HANDLE COLLISIONS with DHBs (Static hitbox is relevant)
-						System.out.println("shb " + shb.getId() + " zone of dhb " + dhb.getId());
-					}
+				if     ((shb.position.x < dhb.getPosition().x+dhb.getSizeX()+shb.xSize && shb.position.x > dhb.getPosition().x-dhb.getSizeX()-shb.xSize) && // Colliding in both x
+						(shb.position.y < dhb.getPosition().y+dhb.getHeight() && shb.position.y > dhb.getPosition().y-shb.height) &&						// y
+						(shb.position.z < dhb.getPosition().z+dhb.getSizeZ()+shb.zSize && shb.position.z > dhb.getPosition().z-dhb.getSizeZ()-shb.zSize)) {	// and z
+					
+					float xVal1 = dhb.getPosition().x+dhb.getSizeX()+shb.xSize-shb.position.x; // from ie left border
+					float xVal2 = dhb.getPosition().x-dhb.getSizeX()-shb.xSize-shb.position.x; // from the other (right) border
+					float xDisplacement = Math.min(Math.abs(xVal1), Math.abs(xVal2));
+					xDisplacement = (Math.pow(xVal1, 2) - Math.pow(xDisplacement, 2) < 0.0001f) ? -xVal1 : -xVal2 ;
+					
+					float yVal1 = dhb.getPosition().y+dhb.getHeight()-shb.position.y; // from ie left border
+					float yVal2 = dhb.getPosition().y-shb.height-shb.position.y; // from the other (right) border
+					float yDisplacement = Math.min(Math.abs(yVal1), Math.abs(yVal2));
+					yDisplacement = (Math.pow(yVal1, 2) - Math.pow(yDisplacement, 2) < 0.0001f) ? -yVal1 : -yVal2 ;
+					
+					float zVal1 = dhb.getPosition().z+dhb.getSizeZ()+shb.zSize-shb.position.z; // from ie left border
+					float zVal2 = dhb.getPosition().z-dhb.getSizeZ()-shb.zSize-shb.position.z; // from the other (right) border
+					float zDisplacement = Math.min(Math.abs(zVal1), Math.abs(zVal2));
+					zDisplacement = (Math.pow(zVal1, 2) - Math.pow(zDisplacement, 2) < 0.0001f) ? -zVal1 : -zVal2 ;
+					
+					
+					float t = Math.min(Math.abs(xDisplacement), Math.abs(zDisplacement));
+					if (t - Math.abs(xDisplacement) < 0.0001f)
+						dhb.setDisplacement(new Vector3f(xDisplacement, 0.0f, 0.0f));
+					else
+						System.out.println("asl;dkjsd");
+						//dhb.setDisplacement(new Vector3f(0.0f, 0.0f, zDisplacement));
+					//dhb.setDisplacement(new Vector3f(xDisplacement, yDisplacement, zDisplacement)); // Send required displacement to the dhb in question
+				} else {
+					dhb.setDisplacement(new Vector3f(0.0f, 0.0f, 0.0f)); // No displacement required since hitbox is NOT colliding
 				}
 			}
 		}
