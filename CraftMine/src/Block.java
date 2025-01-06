@@ -10,6 +10,7 @@ import org.joml.Vector3f;
 public class Block {
 	private static int idCount = 0;
 	public static Block highlightBlock;
+	public static Block[] instancedBlocks = {};
 	
 	private int id;
 	private int type;
@@ -34,18 +35,23 @@ public class Block {
 			Wireframe_Block();
 			break;
 		case 0:
+			addInstanceToArray();
 			Grassy_Dirt_Block();
 			break;
 		case 1:
+			addInstanceToArray();
 			Dirt_Block();
 			break;
 		case 2: 
+			addInstanceToArray();
 			Grassy_Block();
 			break;
 		case 3:
+			addInstanceToArray();
 			Cobblestone_Block();
 			break;
 		default: 
+			addInstanceToArray();
 			Grassy_Block();
 			break;
 		}
@@ -53,6 +59,32 @@ public class Block {
 			this.shb = new StaticHitbox(new Vector3f(position.x, position.y-0.5f*sizeFactor, position.z), 0.5f*sizeFactor, 0.5f*sizeFactor, sizeFactor);
 		sendVerticesToBuffer();
 	}
+	
+
+	private void addInstanceToArray() {
+		Block[] temp = new Block[instancedBlocks.length+1];
+		System.arraycopy(instancedBlocks, 0, temp, 0, instancedBlocks.length);
+		temp[instancedBlocks.length] = this;
+		
+		instancedBlocks = temp;
+	}
+	
+	public void destroy() {
+		if (this.type != -1) {
+			for (int i = 0; i < instancedBlocks.length; i++) {
+				if (instancedBlocks[i] == this) {
+					Block[] temp = new Block[instancedBlocks.length-1];
+					System.arraycopy(instancedBlocks, 0, temp, 0, i);
+					System.arraycopy(instancedBlocks, i+1, temp, i, temp.length-i);
+					
+					instancedBlocks = temp;
+					shb.destroy();
+				}
+			}
+		}
+		Renderer.deleteBlockVertices(this.vertices);
+	}
+	
 	
 	public void damage(float value) {
 		this.health -= value;
@@ -233,11 +265,6 @@ public class Block {
 	
 	public float[] getVertices () {
 		return this.vertices;
-	}
-	
-	public boolean destroy() {
-		shb.destroy();
-		return (Renderer.deleteBlockVertices(this.vertices));
 	}
 	
 	public void highlightBlock() {

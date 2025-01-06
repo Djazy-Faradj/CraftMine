@@ -11,4 +11,7 @@ public class Settings {
 	public static float 		PLAYER_VELOCITY = 2.80f; // Default velocity for player walking state (Running: *=2.0f, Crouching: *=0.6f)
 	
 	public static final float 	FPS_LIMIT = 120.0f;
+	
+	public static final float GRAVITY_ACC = -0.00001f;
+	public static final float TERMINAL_VEL = -0.16f;
 }

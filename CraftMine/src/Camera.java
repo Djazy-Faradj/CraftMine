@@ -11,6 +11,7 @@ public class Camera {
 	private Vector3f position, front, up, right;
 	private float pitch, yaw;
     private float cameraSpeed;
+    private float cameraVerticalSpeed = 0.0f;
     
 	public Camera (Vector3f position) {
 		this.id = cameraIdCount++;
@@ -35,6 +36,10 @@ public class Camera {
 	public void updateCamera() { // To be called every frame
 	    Vector3f horizontalFront = new Vector3f(front.x, 0.0f, front.z).normalize(); // Ignores camera pitch when moving 
 	    
+	    cameraVerticalSpeed += Settings.GRAVITY_ACC / AppMain.kdeltaTime;
+	    
+	    cameraVerticalSpeed = (cameraVerticalSpeed < Settings.TERMINAL_VEL) ? Settings.TERMINAL_VEL : cameraVerticalSpeed;
+	    
 	    if (direction.z == 1.0f) 
 	    	position.add(new Vector3f(horizontalFront).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
 	    if (direction.z == -1.0f) 
@@ -44,6 +49,7 @@ public class Camera {
 	    if (direction.x == -1.0f) 
 	    	position.sub(new Vector3f(right).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
 	 
+	    position.y += cameraVerticalSpeed;
 	}
 
 	public void displace(Vector3f d) { // Used for displacing when colliding against objects
@@ -122,6 +128,10 @@ public class Camera {
 			}
 		}
 		return null;
+	}
+	
+	public void setCameraVerticalSpeed(float v) {
+		this.cameraVerticalSpeed = v;
 	}
 	
 	public boolean equals(Camera c) {

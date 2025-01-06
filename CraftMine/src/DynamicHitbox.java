@@ -40,7 +40,6 @@ public class DynamicHitbox {
 				System.arraycopy(instancedDynamicHitboxes, i+1, temp, i, temp.length-i);
 				
 				instancedDynamicHitboxes = temp;
-				return;
 			}
 		}
 	}
@@ -66,11 +65,15 @@ public class DynamicHitbox {
 	}
 	
 	public void setDisplacement(Vector3f d) {
-		this.displacement = new Vector3f(d);
+		this.displacement.add(d);
 	}
 	
 	public Vector3f getDisplacement() {
 		return this.displacement;
+	}
+	
+	public void resetDisplacement() {
+		this.displacement = new Vector3f();
 	}
 	
 	public int getId() {

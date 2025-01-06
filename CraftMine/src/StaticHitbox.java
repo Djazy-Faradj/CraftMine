@@ -34,7 +34,6 @@ public class StaticHitbox {
 				System.arraycopy(instancedStaticHitboxes, i+1, temp, i, temp.length-i);
 				
 				instancedStaticHitboxes = temp;
-				return;
 			}
 		}
 	}
@@ -43,10 +42,9 @@ public class StaticHitbox {
 		return this.id;
 	}
 	
-	public static void checkForCollisions() {
+	public static void checkForCollisions() {	
 		for (int m = 0; m < instancedStaticHitboxes.length; m++) {
 			StaticHitbox shb = StaticHitbox.instancedStaticHitboxes[m];
-			
 			for (int i = 0; i < DynamicHitbox.instancedDynamicHitboxes.length; i++) {
 				DynamicHitbox dhb = DynamicHitbox.instancedDynamicHitboxes[i];
 				if     ((shb.position.x < dhb.getPosition().x+dhb.getSizeX()+shb.xSize && shb.position.x > dhb.getPosition().x-dhb.getSizeX()-shb.xSize) && // Colliding in both x
@@ -66,19 +64,31 @@ public class StaticHitbox {
 					float zVal1 = dhb.getPosition().z+dhb.getSizeZ()+shb.zSize-shb.position.z; // from ie left border
 					float zVal2 = dhb.getPosition().z-dhb.getSizeZ()-shb.zSize-shb.position.z; // from the other (right) border
 					float zDisplacement = Math.min(Math.abs(zVal1), Math.abs(zVal2));
-					zDisplacement = (Math.pow(zVal1, 2) - Math.pow(zDisplacement, 2) < 0.0001f) ? -zVal1 : -zVal2 ;
-					
+					zDisplacement = (Math.pow(zVal1, 2) - Math.pow(zDisplacement, 2) < 0.0001f) ? -zVal1 : -zVal2 ;	
 					
 					float t = Math.min(Math.abs(xDisplacement), Math.abs(zDisplacement));
-					if (t - Math.abs(xDisplacement) < 0.0001f)
-						dhb.setDisplacement(new Vector3f(xDisplacement, 0.0f, 0.0f));
-					else
-						System.out.println("asl;dkjsd");
-						//dhb.setDisplacement(new Vector3f(0.0f, 0.0f, zDisplacement));
-					//dhb.setDisplacement(new Vector3f(xDisplacement, yDisplacement, zDisplacement)); // Send required displacement to the dhb in question
-				} else {
-					dhb.setDisplacement(new Vector3f(0.0f, 0.0f, 0.0f)); // No displacement required since hitbox is NOT colliding
-				}
+					float y = Math.min(t, Math.abs(yDisplacement));
+					float resX = y - Math.abs(xDisplacement);
+					float resZ = y - Math.abs(zDisplacement);
+					float resY = y - Math.abs(yDisplacement);
+					
+					if (resX == 0.0f) {
+						if (dhb.getDisplacement().x == 0.0f) {
+							dhb.setDisplacement(new Vector3f(xDisplacement, 0.0f, 0.0f));
+						}
+					} 
+					if (resZ == 0.0f) {
+						if (dhb.getDisplacement().z == 0.0f) {
+							dhb.setDisplacement(new Vector3f(0.0f, 0.0f, zDisplacement));
+						}
+					} 
+					if (resY == 0.0f) {
+						if (dhb.getDisplacement().y == 0.0f) {
+							dhb.setDisplacement(new Vector3f(0.0f, yDisplacement, 0.0f));
+						}
+					} 
+					
+				} 
 			}
 		}
 	}

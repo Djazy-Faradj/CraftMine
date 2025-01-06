@@ -42,6 +42,13 @@ public class InputHandler {
 				if (action == GLFW.GLFW_RELEASE)
 					player.getCamera().direction = player.getCamera().direction.add(new Vector3f(-1.0f, 0.0f, 0.0f));
 			}
+			if (key == GLFW.GLFW_KEY_SPACE) {
+				if (action == GLFW.GLFW_PRESS) {
+					if (player.inAir == false) {
+						player.getCamera().setCameraVerticalSpeed(0.3f);;
+					}
+				}
+			}
 			
 			
 			if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS)

@@ -1,5 +1,5 @@
 // Djazy Faradj
-// Last Updated: 2025-01-04
+// Last Updated: 2025-01-06
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL30;
@@ -57,25 +57,20 @@ public class AppMain {
 		Player activePlayer = p1;
 		
 		// TEST (Instantiate a block) ***********
-		Block[] blocks = new Block[256];
-		int k = 0;
-		for (float i = -8.0f; i < 8.0f; i++) {
-			for(float j = -8.0f; j < 8.0f; j++) {
-				for(float l = -1.0f; l < 0.0f; l++, k++) {
-				Block b = new Block(new Vector3f(i, l, j), 0);
-				//System.out.println(k);
-				blocks[k] = b;
-				}
-			}
-			//System.out.println(k);
-		}
+		//Block[] blocks = new Block[256];
+		//int k = 0;
+		//for (float i = -8.0f; i < 8.0f; i++) {
+		//	for(float j = -8.0f; j < 8.0f; j++) {
+		//		for(float l = -1.0f; l < 0.0f; l++, k++) {
+		//		Block b = new Block(new Vector3f(i, l, j), 0);
+		//		blocks[k] = b;
+		//		}
+		//	}
+		//}
 		
-		Block c = new Block(new Vector3f(12.0f, 1.0f, 21.0f), 3);
+		Block c = new Block(new Vector3f(0.0f, -1.0f, 0.0f), 3);
+		Block d = new Block(new Vector3f(1.0f, -1.0f, 0.0f), 3);
 		
-		//DynamicHitbox dhb0 = new DynamicHitbox(new Vector3f(1.1f, 2.1f, 2.0f), 1.0f, 1.0f, 1.0f);
-		//DynamicHitbox dhb1 = new DynamicHitbox(new Vector3f(10.0f, 100.0f, 10.0f));
-		//StaticHitbox shb0 = new StaticHitbox(new Vector3f(1.0f, 0.0f, 1.0f), 1.0f, 1.0f, 1.0f);
-		//StaticHitbox shb1 = new StaticHitbox(new Vector3f(1.9f, 0.0f, 0.0f));
 		// **************************************
 		
 		// Gets called when mouse moves
@@ -128,7 +123,7 @@ public class AppMain {
 					
 					
 					// HORRIBLE PIECE OF CODE BUT WORKS-- WILL MAYBE MAKE IT BETTER ONE DAY (used for block highlighting)
-					Block currentHighlightedBlock = activePlayer.getCamera().scanForBlock(blocks);
+					Block currentHighlightedBlock = activePlayer.getCamera().scanForBlock(Block.instancedBlocks);
 					if (currentHighlightedBlock != null) {
 						if(currentHighlightedBlock != lastHighlightedBlock ) {
 							if (lastHighlightedBlock != null)
