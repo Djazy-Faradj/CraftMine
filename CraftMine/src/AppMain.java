@@ -76,8 +76,17 @@ public class AppMain {
 		Block bb = new Block(new Vector3f(1.0f, 5.0f, 0.0f), 3);
 		Block cc = new Block(new Vector3f(2.0f, 6.0f, 0.0f), 3);
 		Block dd = new Block(new Vector3f(3.0f, 7.0f, 0.0f), 3);
-		
+		 
 		// **************************************
+
+		// Gets called when key is pressed
+		GLFW.glfwSetKeyCallback(window, (win, key, scancode, action, mods) -> {
+			inputHandler.callKeyboard(key, action, scancode, activePlayer);
+		});
+		// Gets called when mouse button is pressed
+		GLFW.glfwSetMouseButtonCallback(window, (win, button, action, mods) -> {
+			inputHandler.callMouseButton(button, action, activePlayer);
+		});
 		
 		// Gets called when mouse moves
 		GLFW.glfwSetCursorPosCallback(window, (win, xpos, ypos) -> {
@@ -92,12 +101,6 @@ public class AppMain {
 			GL30.glViewport(0, 0, nwidth, nheight);
 			shaderProgram.updateAspectRatio(nwidth, nheight);
 		});
-
-		// Gets called when key is pressed
-		GLFW.glfwSetKeyCallback(window, (win, key, scancode, action, mods) -> {
-			inputHandler.call(key, action, scancode, activePlayer);
-		});
-		
 		
 		float lastFrame = (float) GLFW.glfwGetTime();
 		Block lastHighlightedBlock = null;
@@ -126,29 +129,7 @@ public class AppMain {
 					// Update game each ticks (1/120th second)
 					Player.update();
 					StaticHitbox.checkForCollisions();
-					
-					
-					// HORRIBLE PIECE OF CODE BUT WORKS-- WILL MAYBE MAKE IT BETTER ONE DAY (used for block highlighting)
-					Block currentHighlightedBlock = activePlayer.getCamera().scanForBlock(Block.instancedBlocks);
-					if (currentHighlightedBlock != null) {
-						if(currentHighlightedBlock != lastHighlightedBlock ) {
-							if (lastHighlightedBlock != null)
-								lastHighlightedBlock.isHighlighted = false;
-							if (Block.highlightBlock != null)
-								Block.highlightBlock.destroy();
-							currentHighlightedBlock.highlightBlock();
-							lastHighlightedBlock = currentHighlightedBlock;
-						}
-					}
-					else {	
-						if(lastHighlightedBlock != null)
-							lastHighlightedBlock.isHighlighted = false;
-						lastHighlightedBlock = null;
-						if (Block.highlightBlock != null) {
-							Block.highlightBlock.destroy();
-							Block.highlightBlock = null;
-						}
-					}
+				
 					// -------------------------------------------------------------------------------------------------------
 				}
 				// Upon changing game state, change input mode of cursor

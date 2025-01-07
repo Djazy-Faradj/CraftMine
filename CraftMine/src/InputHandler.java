@@ -2,7 +2,7 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class InputHandler {
-	public void call(int key, int action, int scancode, Player player) {
+	public void callKeyboard(int key, int action, int scancode, Player player) {
 		switch (AppMain.currentGameState) {
 		case MENU: // Input handler when in "menu state"
 			if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
@@ -72,6 +72,15 @@ public class InputHandler {
 			// DEBUG INPUTS
 			if (key == GLFW.GLFW_KEY_R && action == GLFW.GLFW_PRESS)
 				player.getCamera().setPosition(new Vector3f(0.0f, 4.0f, 0.0f));
+		}
+	}
+
+	public void callMouseButton(int button, int action, Player player) { // Handles mouse input
+		if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+			System.out.println("asdf");
+			if (player.inAir == false && player.getCurrentHightlightedBlock() != null) {
+				player.getCurrentHightlightedBlock().destroy();
+			}
 		}
 	}
 }

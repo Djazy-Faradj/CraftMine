@@ -21,6 +21,7 @@ public class Player {
 	private Camera playerCam;
 	private DynamicHitbox playerHitbox;
 	public boolean inAir = false;
+	private Block lastHighlightedBlock, currentHighlightedBlock;
 	
 	
 	
@@ -83,8 +84,9 @@ public class Player {
 	public static void update() {
 		for (int i = 0; i < instancedPlayers.length; i++) {
 			Player p = instancedPlayers[i];
-			p.playerCam.displace(p.playerHitbox.getDisplacement());
-			p.playerCam.updateCamera();
+			p.scanBlock(); // Hands block selection
+			p.playerCam.displace(p.playerHitbox.getDisplacement()); // Handles displacement when colliding
+			p.playerCam.updateCamera();								// UpdateCamera
 			
 			// if player is stationary/cancel sprinting
 			if (p.currentPlayerState == PLAYER_STATE.RUNNING && p.getCamera().getDirection().equals(new Vector3f()))
@@ -103,10 +105,34 @@ public class Player {
 				p.inAir = true;
 			}
 
-			p.playerHitbox.resetDisplacement();
-			p.position = new Vector3f(p.getCamera().getPosition()).sub(0.0f, p.size.y-0.2f, 0.0f);	
-			p.playerHitbox.setPosition(p.position);
-			p.playerHitbox.inAir = p.inAir;
+			p.playerHitbox.resetDisplacement();														// Prevents displacements from collisions to stack up
+			p.position = new Vector3f(p.getCamera().getPosition()).sub(0.0f, p.size.y-0.2f, 0.0f);	// Sticks player to the camera
+			p.playerHitbox.setPosition(p.position);													// Makes the player hitbox follow the player
+			p.playerHitbox.inAir = p.inAir;															// Allows player hitbox to keep track whether in the air or not
+		}
+	}
+	
+	public void scanBlock() {
+		// HORRIBLE PIECE OF CODE BUT WORKS-- WILL MAYBE MAKE IT BETTER ONE DAY (used for block highlighting)
+		currentHighlightedBlock = playerCam.scanForBlock(Block.instancedBlocks);
+		if (currentHighlightedBlock != null) {
+			if(currentHighlightedBlock != lastHighlightedBlock ) {
+				if (lastHighlightedBlock != null)
+					lastHighlightedBlock.isHighlighted = false;
+				if (Block.highlightBlock != null)
+					Block.highlightBlock.destroy();
+				currentHighlightedBlock.highlightBlock();
+				lastHighlightedBlock = currentHighlightedBlock;
+			}
+		}
+		else {	
+			if(lastHighlightedBlock != null)
+				lastHighlightedBlock.isHighlighted = false;
+			lastHighlightedBlock = null;
+			if (Block.highlightBlock != null) {
+				Block.highlightBlock.destroy();
+				Block.highlightBlock = null;
+			}
 		}
 	}
 	
@@ -138,6 +164,10 @@ public class Player {
 	
 	public PLAYER_STATE getPlayerState() {
 		return this.currentPlayerState;
+	}
+	
+	public Block getCurrentHightlightedBlock() {
+		return this.currentHighlightedBlock;
 	}
 	
 	public void toggleRunning() {
