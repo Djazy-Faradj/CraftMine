@@ -2,7 +2,7 @@ import org.joml.Vector3f;
 
 public class DynamicHitbox {
 	
-	private static int idCount = 0;
+	private static int idCount = 0; 
 	public static DynamicHitbox[] instancedDynamicHitboxes = {};
 	private Vector3f displacement = new Vector3f(); // Displacement required for the attached entity to correct collision offset
 																				// RADIALLY FOR X AND Z				// FROM ORIGIN FOR Y
@@ -66,13 +66,17 @@ public class DynamicHitbox {
 	public float getSizeZ() {
 		return this.zSize;
 	}
+
+	public Vector3f getDisplacement() {
+		return this.displacement;
+	}
 	
 	public void setDisplacement(Vector3f d) {
 		this.displacement.add(d);
 	}
 	
-	public Vector3f getDisplacement() {
-		return this.displacement;
+	public void setHeight(float h) {
+		this.height = h;
 	}
 	
 	public void resetDisplacement() {

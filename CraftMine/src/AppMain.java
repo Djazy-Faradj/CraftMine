@@ -1,5 +1,5 @@
 // Djazy Faradj
-// Last Updated: 2025-01-06
+// Last Updated: 2025-01-07
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL30;
@@ -53,7 +53,7 @@ public class AppMain {
 		changeGameState(GAME_STATE.PLAY); 
 		
 		// Instantiate player
-		Player p1 = new Player(new Vector3f(0.0f, 0.0f, 0.0f));
+		Player p1 = new Player(new Vector3f(0.0f, 0.0f, 0.0f), shaderProgram);
 		Player activePlayer = p1;
 		
 		// TEST (Instantiate a block) ***********
@@ -63,15 +63,19 @@ public class AppMain {
 			for(float j = -8.0f; j < 8.0f; j++) {
 				for(float l = -1.0f; l < 0.0f; l++, k++) {
 				Block b = new Block(new Vector3f(i, l, j), 0);
-				blocks[k] = b;
+				blocks[k] = b; 
 				}
 			}
 		}
 		
-		Block c = new Block(new Vector3f(0.0f, 2.0f, 0.0f), 3);
-		Block d = new Block(new Vector3f(1.0f, 1.0f, 0.0f), 3);
-		Block a = new Block(new Vector3f(1.0f, 0.0f, 0.0f), 3);
-		Block e = new Block(new Vector3f(2.0f, 3.0f, 0.0f), 3);
+		Block a = new Block(new Vector3f(0.0f, 0.0f, 0.0f), 3);
+		Block b = new Block(new Vector3f(1.0f, 1.0f, 0.0f), 3);
+		Block c = new Block(new Vector3f(2.0f, 2.0f, 0.0f), 3);
+		Block d = new Block(new Vector3f(3.0f, 3.0f, 0.0f), 3);
+		Block aa = new Block(new Vector3f(0.0f, 4.0f, 0.0f), 3);
+		Block bb = new Block(new Vector3f(1.0f, 5.0f, 0.0f), 3);
+		Block cc = new Block(new Vector3f(2.0f, 6.0f, 0.0f), 3);
+		Block dd = new Block(new Vector3f(3.0f, 7.0f, 0.0f), 3);
 		
 		// **************************************
 		

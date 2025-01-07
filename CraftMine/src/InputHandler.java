@@ -7,10 +7,10 @@ public class InputHandler {
 		case MENU: // Input handler when in "menu state"
 			if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
 				AppMain.changeGameState(AppMain.GAME_STATE.PLAY);
-			System.out.println(player);}
-			break;
-		case PLAY: // Input handler when in "play state"
-			if (key == GLFW.GLFW_KEY_W) {
+				break;
+			}
+		default: // Input handler when in "play state" (default)
+			if (key == GLFW.GLFW_KEY_W) {																			 	// W
 				if (action == GLFW.GLFW_PRESS) {
 					player.getCamera().processKeyboard(player.getVelocity());
 					player.getCamera().direction = player.getCamera().direction.add(new Vector3f(0.0f, 0.0f, 1.0f));
@@ -18,7 +18,7 @@ public class InputHandler {
 				if (action == GLFW.GLFW_RELEASE)
 					player.getCamera().direction = player.getCamera().direction.add(new Vector3f(0.0f, 0.0f, -1.0f));
 			}
-			if (key == GLFW.GLFW_KEY_S) {
+			if (key == GLFW.GLFW_KEY_S) {																				// S
 				if (action == GLFW.GLFW_PRESS) {
 					player.getCamera().processKeyboard(player.getVelocity());
 					player.getCamera().direction = player.getCamera().direction.add(new Vector3f(0.0f, 0.0f, -1.0f));
@@ -26,7 +26,7 @@ public class InputHandler {
 				if (action == GLFW.GLFW_RELEASE)
 					player.getCamera().direction = player.getCamera().direction.add(new Vector3f(0.0f, 0.0f, 1.0f));
 			}
-			if (key == GLFW.GLFW_KEY_A) {
+			if (key == GLFW.GLFW_KEY_A) {																				// A
 				if (action == GLFW.GLFW_PRESS) {
 					player.getCamera().processKeyboard(player.getVelocity());
 					player.getCamera().direction = player.getCamera().direction.add(new Vector3f(-1.0f, 0.0f, 0.0f));
@@ -34,7 +34,7 @@ public class InputHandler {
 				if (action == GLFW.GLFW_RELEASE)
 					player.getCamera().direction = player.getCamera().direction.add(new Vector3f(1.0f, 0.0f, 0.0f));
 			}
-			if (key == GLFW.GLFW_KEY_D) {
+			if (key == GLFW.GLFW_KEY_D) {																				// D
 				if (action == GLFW.GLFW_PRESS) {
 					player.getCamera().processKeyboard(player.getVelocity());
 					player.getCamera().direction = player.getCamera().direction.add(new Vector3f(1.0f, 0.0f, 0.0f));
@@ -42,18 +42,36 @@ public class InputHandler {
 				if (action == GLFW.GLFW_RELEASE)
 					player.getCamera().direction = player.getCamera().direction.add(new Vector3f(-1.0f, 0.0f, 0.0f));
 			}
-			if (key == GLFW.GLFW_KEY_SPACE) {
+			if (key == GLFW.GLFW_KEY_SPACE) {																			// SPACE
 				if (action == GLFW.GLFW_PRESS) {
 					if (player.inAir == false) {
-						player.getCamera().setCameraVerticalSpeed(0.08f);
+						if (player.getPlayerState() != Player.PLAYER_STATE.CROUCHING)
+							player.getCamera().setCameraVerticalSpeed(Settings.JUMP_VEL);
+						else
+							player.toggleCrouching();
 					}
 				}
 			}
-			
-			
+			if (key == GLFW.GLFW_KEY_LEFT_SHIFT) {																		// SHIFT_L
+				if (action == GLFW.GLFW_PRESS) {
+					if (player.inAir == false && !player.getCamera().getDirection().equals(new Vector3f())) {
+						player.toggleRunning();
+					}
+				}
+			}
+			if (key == GLFW.GLFW_KEY_LEFT_CONTROL) {																	// CTRL_L
+				if (action == GLFW.GLFW_PRESS) {
+					if (player.inAir == false) {
+						player.toggleCrouching();
+					}
+				}
+			}
 			if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS)
 				AppMain.changeGameState(AppMain.GAME_STATE.MENU);
-			break;
+			
+			// DEBUG INPUTS
+			if (key == GLFW.GLFW_KEY_R && action == GLFW.GLFW_PRESS)
+				player.getCamera().setPosition(new Vector3f(0.0f, 4.0f, 0.0f));
 		}
 	}
 }

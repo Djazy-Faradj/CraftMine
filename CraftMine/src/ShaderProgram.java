@@ -57,7 +57,7 @@ public class ShaderProgram {
 		getProjectionMatrix();
 	}
 	
-	private void getProjectionMatrix() {
+	public void getProjectionMatrix() {
 		// Create perspective projection matrix
 		projection = new Matrix4f().perspective(
 				(float)	Math.toRadians(Settings.CAMERA_FOV),

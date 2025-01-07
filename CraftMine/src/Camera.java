@@ -10,16 +10,22 @@ public class Camera {
 	private int id;
 	private Vector3f position, front, up, right;
 	private float pitch, yaw;
+	private ShaderProgram camShader;
     private float cameraSpeed;
     private float cameraVerticalSpeed = 0.0f;
     
-	public Camera (Vector3f position) {
+	public Camera (Vector3f position, ShaderProgram shader) {
 		this.id = cameraIdCount++;
 		this.position = position;
+		this.camShader = shader;
 		this.front = new Vector3f(0.0f, 0.0f, -1.0f);
 		this.up = new Vector3f(0.0f, 1.0f, 0.0f);
 		this.pitch = 0.0f;
 		this.yaw = -90.0f; // Looking along the negative Z-axis by default
+	}
+	
+	public void setPosition(Vector3f position) {
+		this.position = position;
 	}
 	
 	public Matrix4f getViewMatrix() {
@@ -28,18 +34,22 @@ public class Camera {
 		return new Matrix4f().lookAt(position, center, up);
 	}
 	
+	public void transitionFov(float newFov) {
+		Settings.CAMERA_FOV = newFov;
+		camShader.getProjectionMatrix();
+	}
 	
 	public void processKeyboard(float playerVelocity) {
 	    cameraSpeed = playerVelocity;
 	}
 	
 	public void updateCamera() { // To be called every frame
-	    Vector3f horizontalFront = new Vector3f(front.x, 0.0f, front.z).normalize(); // Ignores camera pitch when moving 
-	    
 	    cameraVerticalSpeed += Settings.GRAVITY_ACC / AppMain.kdeltaTime;
-	    
 	    cameraVerticalSpeed = (cameraVerticalSpeed < Settings.TERMINAL_VEL) ? Settings.TERMINAL_VEL : cameraVerticalSpeed;
-	    
+	    position.y += cameraVerticalSpeed; // Allows for jumping
+
+	    Vector3f horizontalFront = new Vector3f(front.x, 0.0f, front.z).normalize(); // Ignores camera pitch when moving 
+	    // Used for movement in x and z
 	    if (direction.z == 1.0f) 
 	    	position.add(new Vector3f(horizontalFront).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
 	    if (direction.z == -1.0f) 
@@ -48,8 +58,6 @@ public class Camera {
 	    	position.add(new Vector3f(right).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
 	    if (direction.x == -1.0f) 
 	    	position.sub(new Vector3f(right).mul(new Vector3f(cameraSpeed * AppMain.kdeltaTime, 0.0f, cameraSpeed * AppMain.kdeltaTime)));
-	 
-	    position.y += cameraVerticalSpeed;
 	}
 
 	public void displace(Vector3f d) { // Used for displacing when colliding against objects
@@ -113,6 +121,10 @@ public class Camera {
 	
 	public Vector3f getPosition() {
 		return this.position;
+	}
+	
+	public Vector3f getDirection() { 
+		return this.direction;
 	}
 	
 	public float getVerticalSpeed() {
