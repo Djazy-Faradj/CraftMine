@@ -18,7 +18,7 @@ public class Block {
 	private Vector3f position;
 	private float health;
 	private boolean collisionEnabled = false;
-	private StaticHitbox shb = new StaticHitbox(new Vector3f(), 0.0f, 0.0f, 0.0f);
+	private StaticHitbox shb;
 	
 	public boolean isHighlighted = false;
 	
@@ -135,7 +135,6 @@ public class Block {
 		this.yOffset_bottom = 33;
 		this.xOffset_sides = 19;
 		this.yOffset_sides = 33;
-		shb.destroy();
 		generateVertices();
 	}	
 	

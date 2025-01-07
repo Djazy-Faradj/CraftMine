@@ -115,6 +115,10 @@ public class Camera {
 		return this.position;
 	}
 	
+	public float getVerticalSpeed() {
+		return this.cameraVerticalSpeed;
+	}
+	
 	public Vector3f[] getScannedBlockLocs() {
 		return this.scannedBlockLocs;
 	}

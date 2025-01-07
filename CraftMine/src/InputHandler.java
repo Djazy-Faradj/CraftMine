@@ -45,7 +45,7 @@ public class InputHandler {
 			if (key == GLFW.GLFW_KEY_SPACE) {
 				if (action == GLFW.GLFW_PRESS) {
 					if (player.inAir == false) {
-						player.getCamera().setCameraVerticalSpeed(0.3f);;
+						player.getCamera().setCameraVerticalSpeed(0.08f);
 					}
 				}
 			}

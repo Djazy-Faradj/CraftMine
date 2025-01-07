@@ -16,7 +16,7 @@ public class Player {
 	private static int playerIdCount = 1; // Start from 1
 	private int id;
 	private float velocity = Settings.PLAYER_VELOCITY;
-	private Vector3f size = new Vector3f(0.5f, 1.4f, 0.5f);
+	private Vector3f size = new Vector3f(0.5f, 1.9f, 0.5f);
 	private Vector3f position;
 	private Camera playerCam;
 	private DynamicHitbox playerHitbox;
@@ -26,8 +26,8 @@ public class Player {
 	Player(Vector3f position) {
 		this.id = playerIdCount++;
 		this.position = position;
-		this.playerCam = new Camera(new Vector3f(position).add(0.0f, size.y+0.2f, 0.0f)); // Offset camera from player a little bit under the top of body
-		this.playerHitbox = new DynamicHitbox(position, 0.4f, 0.4f, 1.6f); // Generate hitbox for player
+		this.playerCam = new Camera(new Vector3f(position).add(0.0f, size.y-0.2f, 0.0f)); // Offset camera from player a little bit under the top of body
+		this.playerHitbox = new DynamicHitbox(new Vector3f(position), 0.4f, 0.4f, size.y); // Generate hitbox for player
 		this.changePlayerState(PLAYER_STATE.RUNNING);
 		
 		addInstanceToArray();
@@ -76,20 +76,26 @@ public class Player {
 	public static void update() {
 		for (int i = 0; i < instancedPlayers.length; i++) {
 			Player p = instancedPlayers[i];
-			System.out.println(p.inAir);
-			p.playerCam.updateCamera();
 			p.playerCam.displace(p.playerHitbox.getDisplacement());
+			p.playerCam.updateCamera();
 			
 			if (p.playerHitbox.getDisplacement().y != 0.0f) { // Keeps track of whether player is standing on ground or not
-				p.inAir = false;
-				p.getCamera().setCameraVerticalSpeed(0.0f);
+				if (p.playerHitbox.getDisplacement().y > 0.0f) {
+					p.inAir = false;
+					if (p.getCamera().getVerticalSpeed() <= 0.0f) {
+						p.getCamera().setCameraVerticalSpeed(0.0f);
+					}
+				} else if (p.playerHitbox.getDisplacement().y < 0.0f) {
+					p.getCamera().setCameraVerticalSpeed(0.0f);
+				}
 			} else { 
 				p.inAir = true;
 			}
-			
+
 			p.playerHitbox.resetDisplacement();
-			p.position = new Vector3f(p.getCamera().getPosition()).sub(0.0f, p.size.y+0.2f, 0.0f);	
+			p.position = new Vector3f(p.getCamera().getPosition()).sub(0.0f, p.size.y-0.2f, 0.0f);	
 			p.playerHitbox.setPosition(p.position);
+			p.playerHitbox.inAir = p.inAir;
 		}
 	}
 	
@@ -112,6 +118,10 @@ public class Player {
 	
 	public float getVelocity() {
 		return this.velocity;
+	}
+	
+	public DynamicHitbox getDynamicHitbox() {
+		return this.playerHitbox;
 	}
 	
 	// EQUALS

@@ -57,19 +57,21 @@ public class AppMain {
 		Player activePlayer = p1;
 		
 		// TEST (Instantiate a block) ***********
-		//Block[] blocks = new Block[256];
-		//int k = 0;
-		//for (float i = -8.0f; i < 8.0f; i++) {
-		//	for(float j = -8.0f; j < 8.0f; j++) {
-		//		for(float l = -1.0f; l < 0.0f; l++, k++) {
-		//		Block b = new Block(new Vector3f(i, l, j), 0);
-		//		blocks[k] = b;
-		//		}
-		//	}
-		//}
+		Block[] blocks = new Block[256];
+		int k = 0;
+		for (float i = -8.0f; i < 8.0f; i++) {
+			for(float j = -8.0f; j < 8.0f; j++) {
+				for(float l = -1.0f; l < 0.0f; l++, k++) {
+				Block b = new Block(new Vector3f(i, l, j), 0);
+				blocks[k] = b;
+				}
+			}
+		}
 		
-		Block c = new Block(new Vector3f(0.0f, -1.0f, 0.0f), 3);
-		Block d = new Block(new Vector3f(1.0f, -1.0f, 0.0f), 3);
+		Block c = new Block(new Vector3f(0.0f, 2.0f, 0.0f), 3);
+		Block d = new Block(new Vector3f(1.0f, 1.0f, 0.0f), 3);
+		Block a = new Block(new Vector3f(1.0f, 0.0f, 0.0f), 3);
+		Block e = new Block(new Vector3f(2.0f, 3.0f, 0.0f), 3);
 		
 		// **************************************
 		

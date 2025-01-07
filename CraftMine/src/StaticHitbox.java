@@ -84,7 +84,8 @@ public class StaticHitbox {
 					} 
 					if (resY == 0.0f) {
 						if (dhb.getDisplacement().y == 0.0f) {
-							dhb.setDisplacement(new Vector3f(0.0f, yDisplacement, 0.0f));
+							if (!dhb.inAir || Math.abs(zDisplacement) >= 0.1f && Math.abs(xDisplacement) >= 0.1f)
+								dhb.setDisplacement(new Vector3f(0.0f, yDisplacement, 0.0f));
 						}
 					} 
 					

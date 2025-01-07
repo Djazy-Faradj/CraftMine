@@ -14,6 +14,9 @@ public class DynamicHitbox {
 	private float xSize; // Radius of dynamic hitbox (for player specifically)	//		|				//		//			|			//
 	private float zSize;														//		|				//		//		----D---- xSize	//
 																				//----------------------// x	//----------------------// x
+	
+	public boolean inAir = false;
+	
 	public DynamicHitbox(Vector3f position, float xSize, float zSize, float height) {
 		this.id = idCount++;
 		this.position = position;
