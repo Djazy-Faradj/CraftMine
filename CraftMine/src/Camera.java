@@ -135,11 +135,11 @@ public class Camera {
 		return this.scannedBlockLocs;
 	}
 	
-	public Block scanForBlock(Block[] blocksInView) {
+	public Block scanForBlock(Block[] instancedBlocks) {
 		for (int j = 0; j < getScannedBlockLocs().length; j++) {
-			for (int i = 0; i < blocksInView.length; i++) {
-				if (blocksInView[i].isBlockAt(getScannedBlockLocs()[j]) != -1) {
-					return blocksInView[i];
+			for (int i = 0; i < instancedBlocks.length; i++) {
+				if (instancedBlocks[i].isBlockAt(getScannedBlockLocs()[j]) != -1) {
+					return instancedBlocks[i];
 				}
 			}
 		}

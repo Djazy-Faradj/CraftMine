@@ -65,6 +65,11 @@ public class InputHandler {
 						player.toggleCrouching();
 					}
 				}
+				if (action == GLFW.GLFW_RELEASE) {
+					if (player.inAir == false && player.getPlayerState() == Player.PLAYER_STATE.CROUCHING) {
+						player.toggleCrouching();
+					}
+				}
 			}
 			if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS)
 				AppMain.changeGameState(AppMain.GAME_STATE.MENU);
@@ -77,9 +82,10 @@ public class InputHandler {
 
 	public void callMouseButton(int button, int action, Player player) { // Handles mouse input
 		if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-			System.out.println("asdf");
-			if (player.inAir == false && player.getCurrentHightlightedBlock() != null) {
-				player.getCurrentHightlightedBlock().destroy();
+			if (action == GLFW.GLFW_PRESS) {
+				if (player.getCurrentHightlightedBlock() != null) {
+					player.getCurrentHightlightedBlock().destroy();
+				}
 			}
 		}
 	}

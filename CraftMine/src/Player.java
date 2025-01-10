@@ -29,7 +29,7 @@ public class Player {
 		this.id = playerIdCount++;
 		this.position = position;
 		this.playerCam = new Camera(new Vector3f(position).add(0.0f, size.y-0.2f, 0.0f), cameraShader); // Offset camera from player a little bit under the top of body
-		this.playerHitbox = new DynamicHitbox(new Vector3f(position), 0.4f, 0.4f, size.y); // Generate hitbox for player
+		this.playerHitbox = new DynamicHitbox(new Vector3f(position), 0.25f, 0.25f, size.y); // Generate hitbox for player
 		this.changePlayerState(PLAYER_STATE.WALKING);
 		
 		addInstanceToArray();
@@ -63,17 +63,17 @@ public class Player {
 		
 		switch(currentPlayerState) {
 			case PLAYER_STATE.WALKING:
-				this.playerCam.transitionFov(90.0f);
+				this.playerCam.transitionFov(80.0f);
 				this.changePlayerHeight(1.9f);
 				this.setVelocity(Settings.PLAYER_VELOCITY);
 				break;
 			case PLAYER_STATE.RUNNING:
-				this.playerCam.transitionFov(93.0f);
+				this.playerCam.transitionFov(85.0f);
 				this.changePlayerHeight(1.9f);
 				this.setVelocity(Settings.PLAYER_VELOCITY * runningSpeedFactor);
 				break;
 			case PLAYER_STATE.CROUCHING:
-				this.playerCam.transitionFov(90.0f);
+				this.playerCam.transitionFov(80.0f);
 				this.changePlayerHeight(1.5f);
 				this.setVelocity(Settings.PLAYER_VELOCITY * crouchingSpeedFactor);
 				break;

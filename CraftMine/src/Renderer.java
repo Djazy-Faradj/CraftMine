@@ -66,7 +66,7 @@ public class Renderer {
 	}
 	
 	// Check for block vertices and remove from array
-	public static boolean deleteBlockVertices(float[] blockVertices) {
+	public static boolean deleteBlockVertices(float[] blockVertices, int blockType) {
 		for (int i = 0; i < vertices.length; i+=5*36) {
 			for (int j = i; j < i+5*36; j++) {
 				if (blockVertices[j-i] != vertices[j]) break;
@@ -77,6 +77,8 @@ public class Renderer {
 					System.arraycopy(vertices, 0, temp, 0, j-(5*36));
 					System.arraycopy(vertices, j, temp, j-(5*36), vertices.length-(j));
 					vertices = temp;
+					if (blockType != -1)
+						updateBuffer();
 					return true;
 				}
 			}

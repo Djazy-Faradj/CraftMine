@@ -4,7 +4,7 @@ public class Settings {
 	
 	public static float 		
 						 		CAMERA_SENSITIVITY = 0.15f,
-						 		CAMERA_FOV = 90.0f,
+						 		CAMERA_FOV = 80.0f,
 						 		CAMERA_ZNEAR = 0.1f,
 						 		CAMERA_ZFAR = 100.0f; 
 	

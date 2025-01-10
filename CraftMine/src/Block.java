@@ -29,7 +29,8 @@ public class Block {
 	public Block (Vector3f position, int type) {
 		this.id = idCount++;
 		this.position = new Vector3f(position);
-		switch (type) {
+		this.type = type;
+		switch (this.type) {
 		case -1: 
 			this.sizeFactor = 1.001f;
 			Wireframe_Block();
@@ -82,7 +83,7 @@ public class Block {
 				}
 			}
 		}
-		Renderer.deleteBlockVertices(this.vertices);
+		Renderer.deleteBlockVertices(this.vertices, this.type);
 	}
 	
 	
@@ -100,7 +101,7 @@ public class Block {
 	}
 	
 	public void setPosition(Vector3f newPos) {
-		Renderer.deleteBlockVertices(this.vertices);
+		Renderer.deleteBlockVertices(this.vertices, this.type);
 		this.position = newPos;
 		generateVertices();
 		Renderer.addVertices(this.vertices);
@@ -279,5 +280,9 @@ public class Block {
 	
 	private void sendVerticesToBuffer() {
 		Renderer.addVertices(this.vertices);
+	}
+	
+	public String toString() {
+		return ("Block " + this.id + "\n\tPosition: " + this.position + "\n\tType: " + this.type);
 	}
 }
