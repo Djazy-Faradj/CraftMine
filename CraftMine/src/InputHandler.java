@@ -88,5 +88,12 @@ public class InputHandler {
 				}
 			}
 		}
+		if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+			if (action == GLFW.GLFW_PRESS) {
+				if (player.getCurrentHightlightedBlock() != null) { 
+					Block block = new Block(player.getCamera().getBlockPlacementPos(), 3);
+				}
+			}
+		}
 	}
 }

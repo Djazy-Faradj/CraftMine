@@ -5,8 +5,9 @@ public class Camera {
     public Vector3f direction = new Vector3f(0.0f, 0.0f, 0.0f);
     
     private Vector3f[] scannedBlockLocs = new Vector3f[1];
+    private Vector3f blockPlacementPos;
 	private static int cameraIdCount = 1; // Starts at Id 1
-	private float rayLength = 3.0f, rayPrecision = 0.1f; // Higher the precision, more ressource intensive is the ray
+	private float rayLength = 4.0f, rayPrecision = 0.1f; // Higher the precision, more ressource intensive is the ray
 	private int id;
 	private Vector3f position, front, up, right;
 	private float pitch, yaw;
@@ -131,6 +132,10 @@ public class Camera {
 		return this.cameraVerticalSpeed;
 	}
 	
+	public Vector3f getBlockPlacementPos() {
+		return this.blockPlacementPos;
+	}
+	
 	public Vector3f[] getScannedBlockLocs() {
 		return this.scannedBlockLocs;
 	}
@@ -139,6 +144,7 @@ public class Camera {
 		for (int j = 0; j < getScannedBlockLocs().length; j++) {
 			for (int i = 0; i < instancedBlocks.length; i++) {
 				if (instancedBlocks[i].isBlockAt(getScannedBlockLocs()[j]) != -1) {
+					this.blockPlacementPos = getScannedBlockLocs()[j-1];
 					return instancedBlocks[i];
 				}
 			}

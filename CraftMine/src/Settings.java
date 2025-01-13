@@ -13,6 +13,6 @@ public class Settings {
 	public static final float 	FPS_LIMIT = 120.0f;
 	
 	public static final float GRAVITY_ACC = -0.000017f;
-	public static final float TERMINAL_VEL = -0.12f;
+	public static final float TERMINAL_VEL = -0.15f;
 	public static final float JUMP_VEL = 0.07f;
 }
