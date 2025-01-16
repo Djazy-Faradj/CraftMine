@@ -68,6 +68,11 @@ This project is a 3D game built with the **Lightweight Java Game Library (LWJGL)
 
 ---
 
+## Screen Recordings
+**Gameplay**
+
+https://github.com/user-attachments/assets/824124d2-e6b5-49dc-9828-8fa3ae59c6a2
+
 ## How to Run
 
 ### **Prerequisites**
